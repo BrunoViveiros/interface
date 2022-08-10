@@ -99,7 +99,7 @@
     "@typescript-eslint/parser": "^5.9.1",
     "axios-mock-adapter": "^1.21.2",
     "babel-eslint": "^10.1.0",
-    "codehawk-cli": "^8.3.1",
+    "codehawk-cli": "^10.0.1",
     "eslint": "^8.21.0",
     "eslint-config-airbnb": "^19.0.4",
     "eslint-config-prettier": "^8.5.0",
