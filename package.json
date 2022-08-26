@@ -25,7 +25,7 @@
     "lottie-colorify": "^0.8.0",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
-    "react-i18next": "^11.15.3",
+    "react-i18next": "^11.18.5",
     "react-lottie-player": "^1.4.1",
     "react-modal": "^3.14.4",
     "react-query": "^3.34.8",
