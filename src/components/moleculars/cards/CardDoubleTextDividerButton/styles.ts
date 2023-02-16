@@ -1,66 +1,72 @@
-import styled, { css } from "styled-components";
-
-type Props = {
-  processing?: boolean;
-};
+import styled from "styled-components";
+import {
+  defaultBodyXsRegular,
+  defaultHeadingXs,
+} from "styles/typography/default";
 
 export const Container = styled.div`
-  ${() => css`
-    max-width: 206px;
-    padding: 12px 16px;
-    background: #ffffff;
-    box-shadow: 0px 4px 12px rgba(24, 86, 105, 0.15);
-    border-radius: 16px;
-    height: 123px;
-    margin: 8px;
-  `}
+  max-width: 206px;
+  height: 123px;
+  margin: ${({ theme }) => theme.spacing(8)};
+  padding: ${({ theme }) => theme.spacing(12, 16)};
+  border-radius: 16px;
+  background: ${({ theme }) => theme.colors.neutral10};
+  box-shadow: 0 4px 12px ${({ theme }) => theme.colors.defaultShadow};
 `;
 
 export const FirstText = styled.p`
-  ${({ theme }) => css`
-    font-style: italic;
-    font-size: 12px;
-    color: ${theme.colors.darkGray};
-  `}
+  ${defaultBodyXsRegular}
+
+  font-style: italic;
+  color: ${({ theme }) => theme.colors.neutral[500]};
 `;
 
-export const MainContent = styled.p`
-  ${({ theme }) => css`
-    color: ${({ processing }: Props) =>
-      processing ? theme.colors.darkGray : theme.colors.ribonBlue};
-    font-size: 24px;
-    font-weight: 900;
-  `}
+export const MainContent = styled.h3<{
+  processing?: boolean;
+  refunded?: boolean;
+}>`
+  ${defaultHeadingXs}
+
+  color: ${(props) =>
+    // eslint-disable-next-line no-nested-ternary
+    props.processing
+      ? props.theme.colors.neutral[500]
+      : props.refunded
+      ? props.theme.colors.neutral[200]
+      : props.theme.colors.brand.primary[300]};
 `;
 
-export const RightMainContent = styled.span`
-  ${({ theme }) => css`
-    color: ${({ processing }: Props) =>
-      processing ? theme.colors.darkGray : theme.colors.ribonBlue};
-    font-size: 14px;
-    font-weight: 400;
-  `}
+export const RightMainContent = styled.span<{
+  processing?: boolean;
+  refunded?: boolean;
+}>`
+  color: ${(props) =>
+    // eslint-disable-next-line no-nested-ternary
+    props.processing
+      ? props.theme.colors.neutral[500]
+      : props.refunded
+      ? props.theme.colors.neutral[200]
+      : props.theme.colors.brand.primary[300]};
 `;
 
-export const LinkSection = styled.a`
-  ${({ theme }) => css`
-    color: ${theme.colors.ribonBlack};
-    font-size: 12px;
-    justify-content: space-between;
-    display: flex;
-    text-decoration: none;
-  `}
+export const LinkSection = styled.a<{
+  refunded?: boolean;
+}>`
+  display: flex;
+  justify-content: space-between;
+  text-decoration: none;
+  color: ${(props) =>
+    props.refunded
+      ? props.theme.colors.neutral[200]
+      : props.theme.colors.neutral[800]};
 `;
 
 export const SpinnerSection = styled.a`
-  ${({ theme }) => css`
-    color: ${theme.colors.ribonBlue};
-    font-size: 12px;
-    display: flex;
-    text-decoration: none;
-    gap: 10px;
-    margin-top: 10px;
-  `}
+  margin-top: ${({ theme }) => theme.spacing(12)};
+  display: flex;
+  gap: 10px;
+  text-decoration: none;
+  color: ${({ theme }) => theme.colors.brand.primary[300]};
 `;
 
 export const Image = styled.img``;

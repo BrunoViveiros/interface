@@ -1,19 +1,20 @@
 import { useEffect, useState } from "react";
 import { useKeenSlider } from "keen-slider/react";
-import * as S from "./styles";
 import "keen-slider/keen-slider.min.css";
 
 export type Props = {
-  sliderPerView?: number;
+  sliderPerView?: number | "auto";
   spacing?: number;
   children: JSX.Element[];
   mode?: "free" | "free-snap" | "snap";
+  loop?: boolean;
 };
 function Carousel({
   sliderPerView = 2,
   spacing = 15,
   children,
   mode = "snap",
+  loop = false,
 }: Props): JSX.Element {
   const [options, setOptions] = useState({});
   const [slides, setSlides] = useState<JSX.Element[]>([]);
@@ -24,6 +25,7 @@ function Carousel({
     slider.current?.update();
     setOptions({
       mode,
+      loop,
       slides: {
         perView: sliderPerView,
         spacing,
@@ -32,7 +34,7 @@ function Carousel({
   }, [children]);
 
   return (
-    <S.Container>
+    <div>
       <div ref={ref} className="keen-slider">
         {slides.map(
           (component, idx) =>
@@ -43,7 +45,7 @@ function Carousel({
             ),
         )}
       </div>
-    </S.Container>
+    </div>
   );
 }
 

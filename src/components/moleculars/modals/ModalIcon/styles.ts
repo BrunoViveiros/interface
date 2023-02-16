@@ -1,91 +1,51 @@
-import styled, { css } from "styled-components";
-import ReactModal from "react-modal";
-
-export const BlankModal = styled(ReactModal)`
-  background-color: #fff;
-  width: 100%;
-  border-radius: 16px;
-  margin: 16px;
-  max-width: 360px;
-`;
-
-export const Modal = styled(BlankModal)`
-  button,
-  a {
-    margin-bottom: 8px;
-
-    &:last-child {
-      margin: 0;
-    }
-  }
-`;
+import styled from "styled-components";
+import { defaultBodyMdBold } from "styles/typography/default";
+import { Modal } from "../ModalBlank/styles";
 
 export const ModalWithIcon = styled(Modal)`
-  padding: 16px;
-`;
-
-export const ModalWithImage = styled(Modal)`
-  overflow: hidden;
-`;
-
-export const Container = styled.div`
-  padding: 16px;
+  padding: ${({ theme }) => theme.spacing(16)};
 `;
 
 export const Icon = styled.img`
+  height: 80px;
+  margin: -64px auto 8px;
   display: block;
-  width: 96px;
-  height: 96px;
-  margin: -64px auto 8px auto;
 `;
 
-export const BiggerIcon = styled.img`
-  display: block;
-  margin: -64px auto 16px auto;
+export const BiggerIcon = styled(Icon)`
+  height: 100px;
 `;
 
-export const RoundIcon = styled.img`
-  display: block;
-  width: 96px;
-  height: 96px;
-  margin: -64px auto 8px auto;
+export const RoundIcon = styled(Icon)`
   border-radius: 70px;
   object-fit: cover;
-`;
-
-export const Image = styled.img`
-  width: 100%;
-  height: 152px;
 `;
 
 type TitleProps = {
   color?: string;
 };
 
-export const Title = styled.h2<TitleProps>`
-  ${({ theme, color }) => css`
-    text-align: center;
-    color: ${color || theme.colors.ribonBlack};
-  `}
+export const Title = styled.h3<TitleProps>`
+  margin-bottom: ${({ theme }) => theme.spacing(16)};
+  text-align: center;
+  color: ${({ theme, color }) => color || theme.colors.neutral[800]};
 `;
 
-export const Body = styled.h3`
-  color: #82aabe;
+export const Body = styled.h4`
+  margin: ${({ theme }) => theme.spacing(0, 0, 20)};
   text-align: center;
-  margin: 8px 0px 20px;
+  color: ${({ theme }) => theme.colors.neutral[500]};
 `;
 
 export const HighlightedText = styled.p`
-  ${({ theme }) => css`
-    margin-top: 16px;
-    font-weight: bold;
-    text-align: center;
-    color: ${theme.colors.ribonBlack};
-    font-size: 16px;
-  `}
+  ${defaultBodyMdBold}
+
+  margin-top: ${({ theme }) => theme.spacing(16)};
+  text-align: center;
+  color: ${({ theme }) => theme.colors.neutral[800]};
 `;
 
 export const RowsModalRow = styled.div`
+  margin-bottom: ${({ theme }) => theme.spacing(32)};
   display: flex;
-  margin-bottom: 28px;
 `;

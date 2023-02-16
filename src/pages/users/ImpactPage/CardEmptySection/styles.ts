@@ -1,31 +1,26 @@
-import Button from "components/atomics/Button";
-import styled, { css } from "styled-components";
-import theme from "styles/theme";
+import Button from "components/atomics/buttons/Button";
+import styled from "styled-components";
+import { defaultBodySmSemibold } from "styles/typography/default";
 
 export const Container = styled.div`
-  ${() => css`
-    display: flex;
-    flex-direction: column;
-    align-self: center;
-    justify-self: center;
-    align-items: center;
-    justify-content: center;
-    width: 70%;
-  `}
+  width: 70%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  align-self: center;
+  justify-content: center;
+  justify-self: center;
 `;
 
 export const Text = styled.p`
-  ${() => css`
-    color: ${theme.colors.darkGray};
-    font-weight: 700;
-    margin-top: 28px;
-    text-align: center;
-  `}
+  ${defaultBodySmSemibold}
+
+  margin-top: ${({ theme }) => theme.spacing(32)};
+  text-align: center;
+  color: ${({ theme }) => theme.colors.neutral[500]};
 `;
 
 export const EmptyDonationButton = styled(Button)`
-  ${() => css`
-    margin-top: 14px;
-    width: 200px;
-  `}
+  width: 200px;
+  margin-top: ${({ theme }) => theme.spacing(16)};
 `;

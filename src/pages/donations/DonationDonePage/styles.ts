@@ -1,94 +1,71 @@
-import styled, { css } from "styled-components";
-import Button from "components/atomics/Button";
+import styled from "styled-components";
+import Button from "components/atomics/buttons/Button";
 import Divider from "components/atomics/Divider";
+import LottieAnimation from "components/atomics/LottieAnimation";
 
 export const Container = styled.div`
-  ${() => css`
-    display: grid;
-    grid-gap: 0px; // grid-template-rows: [line-2] 80px;
-    height: 100vh;
-    width: 100%;
+  padding-inline: 16px;
+  width: 100%;
+  height: 100vh;
+  display: grid;
+  grid-gap: 0;
 
-    @media (min-width: ${({ theme }) => theme.breakpoints.pad}) {
-      max-width: 340px;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      margin: 0 auto;
-    }
-  `}
-`;
-
-export const Wrapper = styled.div`
-  ${() => css`
+  @media (min-width: ${({ theme }) => theme.breakpoints.pad}) {
+    max-width: 340px;
+    margin: 0 auto;
     display: flex;
     flex-direction: column;
     align-items: center;
-    padding: 28px 0px;
-  `}
+    justify-content: center;
+  }
+`;
+
+export const Wrapper = styled.div`
+  padding: ${({ theme }) => theme.spacing(32, 0)};
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 `;
 
 export const InnerContainer = styled.div`
-  ${() => css`
-    padding: 0px 20px;
-  `}
+  padding: ${({ theme }) => theme.spacing(0, 20)};
 `;
 
-export const Title = styled.h5`
-  ${() => css`
-    color: ${({ theme }) => theme.colors.ribonBlack};
-    margin-top: 20px;
-    font-weight: bold;
-    font-size: 20px;
-    line-height: 160%;
-
-    @media (min-width: ${({ theme }) => theme.breakpoints.pad}) {
-      font-size: 24px;
-    }
-  `}
+export const Title = styled.h3`
+  margin-top: ${({ theme }) => theme.spacing(20)};
+  color: ${({ theme }) => theme.colors.neutral[800]};
 `;
 
-export const Subtitle = styled.h6`
-  ${() => css`
-    color: ${({ theme }) => theme.colors.ribonBlue};
-    margin-top: 4px;
-    margin-bottom: 24px;
-    font-size: 16px;
-    line-height: 160%;
-
-    @media (min-width: ${({ theme }) => theme.breakpoints.pad}) {
-      font-size: 20px;
-    }
-  `}
+export const Subtitle = styled.h4`
+  margin-top: ${({ theme }) => theme.spacing(4)};
+  margin-bottom: ${({ theme }) => theme.spacing(24)};
+  text-align: center;
+  color: ${({ theme }) => theme.colors.neutral[500]};
 `;
 
 export const ButtonContainer = styled.div`
-  ${() => css`
-    box-shadow: 0px -4px 4px rgba(24, 86, 105, 0.15);
-    height: 80px;
-    background-color: white;
-    width: 100%;
-    padding: 12px 16px;
-    align-self: end;
-    display: flex;
-    align-items: center;
+  width: 100%;
+  height: 80px;
+  padding: ${({ theme }) => theme.spacing(12, 16)};
+  display: flex;
+  align-items: center;
+  align-self: end;
+  background-color: ${({ theme }) => theme.colors.neutral10};
 
-    @media (min-width: ${({ theme }) => theme.breakpoints.pad}) {
-      box-shadow: none;
-      padding: 0;
-      max-width: 340px;
-    }
-  `}
+  @media (min-width: ${({ theme }) => theme.breakpoints.pad}) {
+    max-width: 340px;
+    padding: ${({ theme }) => theme.spacing(0)};
+    box-shadow: none;
+  }
 `;
 
 export const HrDivider = styled(Divider)`
-  padding: 0 100px;
   width: 50px;
+  padding: ${({ theme }) => theme.spacing(0, 112)};
 `;
 
 export const FinishButton = styled(Button)`
-  @media (min-width: ${({ theme }) => theme.breakpoints.pad}) {
-    height: 56px;
-  }
+  height: 50px;
 `;
+
+export const HeartAnimation = styled(LottieAnimation)``;

@@ -6,6 +6,8 @@ import {
 import { useContext } from "react";
 import theme from "styles/theme";
 
+const { tertiary } = theme.colors.brand;
+
 type Props = {
   message: string;
   type?: "success" | "error";
@@ -32,8 +34,7 @@ const useToast = () => {
         message,
         link,
         linkMessage,
-        color:
-          type === "success" ? theme.colors.ribonBlack : theme.colors.lgRed,
+        color: type === "success" ? theme.colors.neutral[800] : tertiary[200],
       },
     });
     setTimeout(() => {

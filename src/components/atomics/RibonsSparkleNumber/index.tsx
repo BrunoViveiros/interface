@@ -5,8 +5,7 @@ import * as S from "./styles";
 import LeftSparkle from "./assets/reward-sparkle-left.svg";
 import RightSparkle from "./assets/reward-sparkle-right.svg";
 
-const { colors } = theme;
-const { ribonBlue } = colors;
+const { primary } = theme.colors.brand;
 
 export type Props = {
   ribons: number;
@@ -14,7 +13,7 @@ export type Props = {
 };
 function RibonsSparkleNumber({
   ribons,
-  ribonColor = ribonBlue,
+  ribonColor = primary[300],
 }: Props): JSX.Element {
   return (
     <S.Container>

@@ -1,41 +1,23 @@
-import styled, { css } from "styled-components";
+import styled from "styled-components";
+import { Input } from "../InputText/styles";
 
 export const Container = styled.div`
-  ${() => css`
-    position: absolute;
-    width: 100%;
-    max-width: 300px;
-    z-index: 999;
-    box-shadow: 0px 4px 12px rgba(24, 86, 105, 0.15);
-    border-radius: 8px;
-  `}
+  width: 100%;
+  max-width: 300px;
+  border-radius: 5px;
+  z-index: ${({ theme }) => theme.zindex.dropdown};
+  box-shadow: 0 4px 12px ${({ theme }) => theme.colors.defaultShadow};
 `;
 
-export const Input = styled.input`
-  ${({ theme }) => css`
-    position: relative;
-    width: 100%;
-    margin-bottom: 12px;
-    border: 1px solid ${theme.colors.ribonBlue};
-    border-radius: 8px;
-    padding: 8px 16px 8px 16px;
-  `}
-`;
+export const InputAutoComplete = styled(Input)``;
 
 export const OptionContainer = styled.div`
-  ${({ theme }) => css`
-    padding: 8px 16px;
-    background-color: ${theme.colors.bgGray};
-    width: 100%;
+  width: 100%;
+  padding: ${({ theme }) => theme.spacing(8, 16)};
+  background-color: ${({ theme }) => theme.colors.neutral10};
 
-    &:hover {
-      background-color: ${theme.colors.hoverGray};
-      cursor: pointer;
-    }
-  `}
-`;
-
-export const OptionText = styled.h4`
-  font-weight: bold;
-  line-height: 22px;
+  &:hover {
+    background-color: ${({ theme }) => theme.colors.neutral[50]};
+    cursor: pointer;
+  }
 `;

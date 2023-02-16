@@ -1,75 +1,73 @@
-import CardEmptySection from "pages/users/ImpactPage/CardEmptySection";
 import CardTopImage from "components/moleculars/cards/CardTopImage";
-import { useCurrentUser } from "contexts/currentUserContext";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useTranslation } from "react-i18next";
-import { logEvent } from "services/analytics";
-import useDonations from "hooks/apiHooks/useDonations";
-import useImpact from "hooks/apiHooks/useImpact";
+import { logEvent } from "lib/events";
+import { useStatistics } from "@ribon.io/shared/hooks";
+import { formatPriceWithZeros } from "lib/formatters/currencyFormatter";
+import DownloadAppToast from "components/moleculars/Toasts/DownloadAppToast";
+import { useLanguage } from "hooks/useLanguage";
+import { coinByLanguage } from "lib/coinByLanguage";
+import { useCurrentUser } from "contexts/currentUserContext";
+import ImpactMenu from "./ImpactMenu";
+import TicketIcon from "./assets/ticket-icon.svg";
+import MoneyIcon from "./assets/money-icon.svg";
+import NgoIcon from "./assets/ngo-icon.svg";
+import CausesIcon from "./assets/causes-icon.svg";
 import * as S from "./styles";
 
 function ImpactPage(): JSX.Element {
-  const INITIAL_CARDS_COUNT = 2;
   const { t } = useTranslation("translation", {
     keyPrefix: "impactPage",
   });
-  const { currentUser } = useCurrentUser();
-  const { donationsCount: ticketsUsed } = useDonations();
-  const { userImpact } = useImpact();
-  const [impactCardsToShow, setImpactCardsToShow] =
-    useState<number>(INITIAL_CARDS_COUNT);
 
-  const userHasDonated = ticketsUsed && currentUser;
+  const { currentUser } = useCurrentUser();
+  const { userStatistics } = useStatistics({ userId: currentUser?.id });
+  const { currentLang } = useLanguage();
 
   useEffect(() => {
     logEvent("profile_view");
   }, []);
 
-  const handleClick = () => {
-    logEvent("profileShowAllButton_click");
-    setImpactCardsToShow(userImpact?.length || INITIAL_CARDS_COUNT);
-  };
-
-  const impactCards = () => userImpact?.slice(0, impactCardsToShow) || [];
-  const shouldShowButton = () =>
-    userImpact?.length &&
-    userImpact.length > INITIAL_CARDS_COUNT &&
-    userImpact.length > impactCardsToShow;
-  const hasImpact = () => impactCards().length > 0;
-
   return (
     <S.Container>
-      <S.Title>{t("title").toUpperCase()}</S.Title>
-      {userHasDonated && (
-        <S.Subtitle>{t("subtitle", { ticketsUsed })}</S.Subtitle>
-      )}
-
-      {hasImpact() ? (
-        <S.CardsButtonContainer>
-          <S.Wrapper>
-            {impactCards().map((item) => (
-              <CardTopImage
-                key={item.nonProfit.id}
-                text={`${t("impactText")} ${item.impact.toString()} ${
-                  item.nonProfit.impactDescription
-                }`}
-                imageUrl={item.nonProfit.backgroundImage}
-                imageAlt={item.impact}
-              />
-            ))}
-          </S.Wrapper>
-          {shouldShowButton() && (
-            <S.Button text={t("button")} onClick={handleClick} />
+      <DownloadAppToast />
+      <S.Title>{t("title")}</S.Title>
+      <S.CardsButtonContainer>
+        <CardTopImage
+          text={t("donatedTickets")}
+          icon={TicketIcon}
+          title={userStatistics?.totalTickets ?? 0}
+          size="small"
+        />
+        <CardTopImage
+          text={t("donatedMoney")}
+          icon={MoneyIcon}
+          size="small"
+          title={formatPriceWithZeros(
+            currentLang === "pt-BR"
+              ? userStatistics?.totalDonated?.brl ?? 0
+              : userStatistics?.totalDonated?.usd ?? 0,
+            coinByLanguage(currentLang),
+            currentLang,
           )}
-        </S.CardsButtonContainer>
-      ) : (
-        <S.EmptySectionContainer>
-          <CardEmptySection
-            cardText={t("noImpactText")}
-            btnText={t("noImpactButton")}
-          />
-        </S.EmptySectionContainer>
-      )}
+        />
+        <CardTopImage
+          text={t("supportedNgos")}
+          icon={NgoIcon}
+          title={userStatistics?.totalNonProfits ?? 0}
+          size="small"
+        />
+        <CardTopImage
+          text={t("supporterCauses")}
+          icon={CausesIcon}
+          title={userStatistics?.totalCauses ?? 0}
+          size="small"
+        />
+      </S.CardsButtonContainer>
+
+      <S.ImpactMenuContainer>
+        <ImpactMenu />
+      </S.ImpactMenuContainer>
     </S.Container>
   );
 }

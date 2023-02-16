@@ -1,11 +1,14 @@
 import ModalBlank from "components/moleculars/modals/ModalBlank";
 import Header from "components/atomics/sections/Header";
-import useIntegration from "hooks/apiHooks/useIntegration";
+import { useIntegration, useCanDonate } from "@ribon.io/shared/hooks";
 import { useCurrentUser } from "contexts/currentUserContext";
-import { today } from "lib/dateTodayFormatter";
 import cogIcon from "assets/icons/cog-icon.svg";
 import ticketOn from "assets/icons/ticket-icon-on.svg";
 import ticketOff from "assets/icons/ticket-icon-off.svg";
+import Ticket from "assets/images/ticket.svg";
+import { useTranslation } from "react-i18next";
+import useVoucher from "hooks/useVoucher";
+import { MODAL_TYPES } from "contexts/modalContext/helpers";
 import { useState } from "react";
 import { Divider } from "components/atomics/Divider/styles";
 import theme from "styles/theme";
@@ -13,33 +16,76 @@ import useBreakpoint from "hooks/useBreakpoint";
 import { useIntegrationId } from "hooks/useIntegrationId";
 import useNavigation from "hooks/useNavigation";
 import { useBlockedDonationModal } from "hooks/modalHooks/useBlockedDonationModal";
-import { useDonationTicketModal } from "hooks/modalHooks/useDonationTicketModal";
+import { RIBON_COMPANY_ID } from "utils/constants";
+import { logEvent, newLogEvent } from "lib/events";
+import { useModal } from "hooks/modalHooks/useModal";
 import ChangeLanguageItem from "./ChangeLanguageItem";
 import LogoutItem from "./LogoutItem";
 import * as S from "./styles";
+import UserSupportItem from "./UserSupportItem";
+import GetTheAppItem from "./GetTheAppItem";
 
 export type Props = {
   rightComponent?: JSX.Element;
   hasBackButton?: boolean;
+  hideWallet?: boolean;
 };
+
+const { primary } = theme.colors.brand;
 
 function LayoutHeader({
   rightComponent,
   hasBackButton = false,
+  hideWallet = false,
 }: Props): JSX.Element {
   const integrationId = useIntegrationId();
   const [menuVisible, setMenuVisible] = useState(false);
   const { isMobile } = useBreakpoint();
-  const { userLastDonation, signedIn } = useCurrentUser();
-  const { navigateBack } = useNavigation();
-  const { showBlockedDonationModal } = useBlockedDonationModal();
-  const { showDonationTicketModal } = useDonationTicketModal();
+  const { signedIn } = useCurrentUser();
+  const { navigateBack, history, navigateTo } = useNavigation();
+  const { integration } = useIntegration(integrationId);
+  const { showBlockedDonationModal } = useBlockedDonationModal(
+    undefined,
+    integration,
+  );
+  const { canDonate } = useCanDonate(integrationId);
+  const { isVoucherAvailable } = useVoucher();
+
+  const { t } = useTranslation("translation", {
+    keyPrefix: "layouts.layoutHeader",
+  });
+
+  const canDonateAndHasVoucher = canDonate && isVoucherAvailable();
+
+  const { show, hide } = useModal({
+    type: MODAL_TYPES.MODAL_ICON,
+    props: {
+      title: t("donationModalTitle"),
+      body: t("donationModalBody"),
+      primaryButton: {
+        text: t("donationModalButtonText"),
+        onClick: () => {
+          if (history.location.pathname === "/") {
+            hide();
+          } else {
+            navigateTo("/");
+            hide();
+          }
+        },
+        eventName: "ticketModalBtn",
+        eventParams: { ticketQtd: 1 },
+      },
+      onClose: () => hide(),
+      icon: Ticket,
+      eventName: "ticketModal",
+      eventParams: { ticketQtd: 1 },
+    },
+  });
 
   if (!integrationId) return <div />;
 
-  const { integration } = useIntegration(integrationId);
-
   function openMenu() {
+    logEvent("configButton_click");
     setMenuVisible(true);
   }
 
@@ -47,15 +93,20 @@ function LayoutHeader({
     setMenuVisible(false);
   }
 
-  function hasDonateToday() {
-    return userLastDonation === today();
+  function handleCounterClick() {
+    if (canDonateAndHasVoucher) {
+      newLogEvent("click", "ticketIcon", { ticketQtd: 1 });
+      show();
+    } else {
+      newLogEvent("click", "ticketIcon", { ticketQtd: 0 });
+      showBlockedDonationModal();
+    }
   }
 
-  function handleCounterClick() {
-    if (hasDonateToday()) showBlockedDonationModal();
-    else {
-      showDonationTicketModal();
-    }
+  function renderSideLogo() {
+    if (integrationId?.toString() === RIBON_COMPANY_ID) return undefined;
+
+    return integration?.logo;
   }
 
   return (
@@ -69,41 +120,60 @@ function LayoutHeader({
             display: "flex",
             alignItems: "flex-start",
             justifyContent: "flex-end",
+            zIndex: `${theme.zindex.modal}`,
           },
           content: {
-            border: `1px solid ${theme.colors.lightGray}`,
-            paddingLeft: 8,
-            paddingRight: 8,
+            border: `1px solid ${theme.colors.neutral[200]}`,
+            paddingLeft: 16,
+            paddingRight: 16,
             position: isMobile ? "relative" : "absolute",
-            top: isMobile ? "5%" : "8%",
+            top: isMobile ? "6%" : "10%",
             right: isMobile ? "" : "14%",
           },
         }}
       >
+        <GetTheAppItem />
+        <Divider color={theme.colors.neutral[200]} />
+        <UserSupportItem />
+        <Divider color={theme.colors.neutral[200]} />
         <ChangeLanguageItem />
-        <Divider color={theme.colors.lightGray} />
-        {signedIn ? <LogoutItem /> : <div />}
+
+        {signedIn ? (
+          <div>
+            <Divider color={theme.colors.neutral[200]} />
+            <LogoutItem />
+          </div>
+        ) : (
+          <div />
+        )}
       </ModalBlank>
       <Header
         hasBackButton={hasBackButton}
         onBackButtonClick={navigateBack}
-        sideLogo={integration?.logo}
+        sideLogo={renderSideLogo()}
         rightComponent={
           <S.ContainerRight>
             {rightComponent}
-            <S.CounterContainer onClick={() => handleCounterClick()}>
-              <S.TicketsAmount
-                color={
-                  hasDonateToday()
-                    ? theme.colors.darkGray
-                    : theme.colors.ribonBlue
-                }
-              >
-                {hasDonateToday() ? 0 : 1}
-              </S.TicketsAmount>
-              <S.CounterImage src={hasDonateToday() ? ticketOff : ticketOn} />
-            </S.CounterContainer>
-            <S.Settings onClick={() => openMenu()} src={cogIcon} />
+            {!hideWallet && (
+              <S.ContainerButtons>
+                <S.CounterContainer onClick={() => handleCounterClick()}>
+                  <S.TicketsAmount
+                    color={
+                      canDonateAndHasVoucher
+                        ? primary[300]
+                        : theme.colors.neutral[500]
+                    }
+                  >
+                    {canDonateAndHasVoucher ? 1 : 0}
+                  </S.TicketsAmount>
+                  <S.CounterImage
+                    src={canDonateAndHasVoucher ? ticketOn : ticketOff}
+                  />
+                </S.CounterContainer>
+
+                <S.Settings onClick={() => openMenu()} src={cogIcon} />
+              </S.ContainerButtons>
+            )}
           </S.ContainerRight>
         }
       />

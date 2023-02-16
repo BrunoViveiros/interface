@@ -1,20 +1,18 @@
-import styled, { css } from "styled-components";
+import styled from "styled-components";
+import { defaultBodySmSemibold } from "styles/typography/default";
 
 export const Container = styled.div`
   display: flex;
   flex-direction: row;
-  justify-content: center;
   align-items: center;
+  justify-content: center;
 `;
 
 export const RibonsAmount = styled.p`
-  ${({ theme }) => css`
-    font-size: 14px;
-    line-height: 17px;
-    font-weight: bold;
-    margin-right: 2px;
-    color: ${theme.colors.ribonBlue};
-  `}
+  ${defaultBodySmSemibold}
+
+  margin-right: ${({ theme }) => theme.spacing(4)};
+  color: ${({ theme }) => theme.colors.brand.primary[300]};
 `;
 
 export const Sparkle = styled.img`

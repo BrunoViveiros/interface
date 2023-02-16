@@ -1,10 +1,8 @@
-import styled, { css } from "styled-components";
+import styled from "styled-components";
 
 export const Container = styled.div`
-  ${() => css`
-    padding: 12px 16px;
-    background: #ffffff;
-    box-shadow: 0px 4px 12px rgba(24, 86, 105, 0.15);
-    border-radius: 16px;
-  `}
+  padding: ${({ theme }) => theme.spacing(12, 16)};
+  border-radius: 16px;
+  background: ${({ theme }) => theme.colors.neutral10};
+  box-shadow: 0 4px 12px ${({ theme }) => theme.colors.defaultShadow};
 `;

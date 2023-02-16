@@ -6,6 +6,7 @@ export type Props = {
   suggestions: any[];
   placeholder: string;
   onOptionChanged?: (value: any) => void;
+  required?: boolean;
 };
 
 function InputAutoComplete({
@@ -13,6 +14,7 @@ function InputAutoComplete({
   suggestions,
   placeholder,
   onOptionChanged,
+  required,
 }: Props): JSX.Element {
   const [filteredSuggestions, setFilteredSuggestions] = useState(suggestions);
   const [showSuggestions, setShowSuggestions] = useState(false);
@@ -47,7 +49,7 @@ function InputAutoComplete({
 
   return (
     <>
-      <S.Input
+      <S.InputAutoComplete
         id={name}
         onChange={onChange}
         onClick={onClick}
@@ -55,6 +57,8 @@ function InputAutoComplete({
         placeholder={placeholder}
         aria-label={placeholder}
         name={name}
+        required={required}
+        autoComplete="off"
       />
       {showSuggestions && input && (
         <S.Container>
@@ -65,7 +69,7 @@ function InputAutoComplete({
                   onClick={() => handleOptionClick(value)}
                   key={value}
                 >
-                  <S.OptionText>{value}</S.OptionText>
+                  <h5>{value}</h5>
                 </S.OptionContainer>
               ),
           )}

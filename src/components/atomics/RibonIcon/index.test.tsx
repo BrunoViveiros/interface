@@ -7,14 +7,14 @@ describe("<RibonIcon />", () => {
   it("should render with default color", () => {
     renderComponent(<RibonIcon />);
     expect(screen.getByLabelText(/Ribon Icon/i).parentElement).toHaveStyle(
-      "color: #00CDB4",
+      "color: #00DA93",
     );
   });
 
-  it("should render with red color when color is passed ", () => {
-    renderComponent(<RibonIcon color="red" />);
+  it("should render with colorBrandTertiary400 color when color is passed ", () => {
+    renderComponent(<RibonIcon color="color.brand.tertiary[400]" />);
     expect(screen.getByLabelText(/Ribon Icon/i).parentElement).toHaveStyle(
-      "color: red",
+      "color: color.brand.tertiary[400]",
     );
   });
 });

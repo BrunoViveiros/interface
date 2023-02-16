@@ -1,14 +1,17 @@
-import React, { useState } from "react";
+import React, { CSSProperties, useCallback, useEffect, useState } from "react";
 import ArrowDownIcon from "assets/icons/arrow-down-icon.svg";
 import ModalBlank from "components/moleculars/modals/ModalBlank";
 import * as S from "./styles";
 
 export type Props = {
   name: string;
-  label: string;
+  label?: string;
   values: any[];
   defaultValue?: any;
   onOptionChanged?: (value: any) => void;
+  valueText?: (value: any) => string;
+  customInputStyles?: CSSProperties;
+  containerId?: string;
 };
 
 function Dropdown({
@@ -17,8 +20,17 @@ function Dropdown({
   values,
   onOptionChanged,
   defaultValue,
+  valueText,
+  containerId = "dropdown-container",
+  customInputStyles = {},
 }: Props): JSX.Element {
-  const [dropdownValue, setDropdownValue] = useState(defaultValue || values[0]);
+  const valueToText = (value: any) => {
+    if (valueText && value) return valueText(value);
+
+    return value;
+  };
+
+  const [dropdownValue, setDropdownValue] = useState(values[0]);
   const [optionsVisible, setOptionsVisible] = useState(false);
 
   const handleInputClick = () => {
@@ -31,8 +43,16 @@ function Dropdown({
     if (onOptionChanged) onOptionChanged(value);
   };
 
+  const updateDropdownValue = useCallback(() => {
+    if (defaultValue) setDropdownValue(defaultValue);
+  }, [defaultValue]);
+
+  useEffect(() => {
+    updateDropdownValue();
+  }, [updateDropdownValue]);
+
   return (
-    <S.Container id="dropdown-container">
+    <S.Container id={containerId}>
       <ModalBlank
         visible={optionsVisible}
         onClose={() => setOptionsVisible(false)}
@@ -56,7 +76,7 @@ function Dropdown({
           },
         }}
         parentSelector={() =>
-          document.querySelector("#dropdown-container") || document.body
+          document.querySelector(`#${containerId}`) || document.body
         }
       >
         {values.map((value, index) => (
@@ -64,18 +84,19 @@ function Dropdown({
             onClick={() => handleOptionClick(value)}
             key={index.toString(10)}
           >
-            <S.OptionText>{value}</S.OptionText>
+            <S.OptionText>{valueToText(value)}</S.OptionText>
           </S.OptionContainer>
         ))}
       </ModalBlank>
-      <S.Input onClick={handleInputClick}>
+      <S.Input onClick={handleInputClick} style={customInputStyles}>
         {label && <label htmlFor={name}>{label}</label>}
         <input
           type="text"
           name={name}
           aria-label={name}
-          value={dropdownValue}
+          value={valueToText(dropdownValue)}
           readOnly
+          style={{ color: customInputStyles.color }}
         />
         <img src={ArrowDownIcon} alt="arrow-down" />
       </S.Input>

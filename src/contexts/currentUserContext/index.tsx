@@ -7,13 +7,12 @@ import React, {
   useMemo,
   useState,
 } from "react";
+import { setUserId } from "services/analytics/firebase";
 import User from "types/entities/User";
 
 export interface ICurrentUserContext {
   currentUser: User | undefined;
-  userLastDonation: string | undefined;
   setCurrentUser: Dispatch<SetStateAction<User | undefined>>;
-  setUserLastDonation: Dispatch<SetStateAction<string>>;
   updateCurrentUser: (data: Partial<User>) => void;
   logoutCurrentUser: () => void;
   signedIn: boolean;
@@ -28,7 +27,7 @@ export const CurrentUserContext = createContext<ICurrentUserContext>(
 );
 
 export const CURRENT_USER_KEY = "CURRENT_USER_KEY";
-export const CURRENT_USER_LAST_DONATION_KEY = "CURRENT_USER_LAST_DONATION_KEY";
+export const SHOW_MENU = "SHOW_MENU";
 
 function CurrentUserProvider({ children }: Props) {
   function getUserFromLocalStorage() {
@@ -42,18 +41,6 @@ function CurrentUserProvider({ children }: Props) {
     getUserFromLocalStorage(),
   );
 
-  function getUserLastDonationFromLocalStorage() {
-    const lastDonation = localStorage.getItem(
-      `${CURRENT_USER_LAST_DONATION_KEY}_${currentUser?.id}`,
-    );
-    if (!lastDonation || lastDonation === "undefined") return undefined;
-
-    return JSON.parse(lastDonation);
-  }
-
-  const [userLastDonation, setUserLastDonation] = useState<string | "">(
-    getUserLastDonationFromLocalStorage(),
-  );
   const [signedIn, setSignedIn] = useState(false);
 
   function updateCurrentUser(data: Partial<User>) {
@@ -63,36 +50,37 @@ function CurrentUserProvider({ children }: Props) {
   function logoutCurrentUser() {
     setCurrentUser(undefined);
     localStorage.removeItem(CURRENT_USER_KEY);
+    localStorage.removeItem(SHOW_MENU);
   }
 
   function setUserInLocalStorage() {
     localStorage.setItem(CURRENT_USER_KEY, JSON.stringify(currentUser));
   }
 
-  function setUserLastDonationInLocalStorage() {
-    localStorage.setItem(
-      `${CURRENT_USER_LAST_DONATION_KEY}_${currentUser?.id}`,
-      JSON.stringify(userLastDonation),
-    );
+  function setUserIdInAnalytics() {
+    if (currentUser?.id) {
+      setUserId(currentUser?.id);
+    }
   }
 
   useEffect(() => {
     setSignedIn(!!currentUser);
     setUserInLocalStorage();
-    setUserLastDonationInLocalStorage();
-  }, [currentUser, userLastDonation]);
+
+    if (process.env.NODE_ENV !== "development") {
+      setUserIdInAnalytics();
+    }
+  }, [currentUser]);
 
   const currentUserObject: ICurrentUserContext = useMemo(
     () => ({
       currentUser,
-      userLastDonation,
       setCurrentUser,
-      setUserLastDonation,
       updateCurrentUser,
       signedIn,
       logoutCurrentUser,
     }),
-    [currentUser, userLastDonation, signedIn],
+    [currentUser, signedIn],
   );
 
   return (

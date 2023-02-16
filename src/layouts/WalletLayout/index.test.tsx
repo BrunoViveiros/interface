@@ -24,8 +24,8 @@ describe("WalletLayout", () => {
       </WalletLayout>,
     );
 
-    expectTextToBeInTheDocument("Treasure");
-    expectTextToBeInTheDocument("Causes");
+    expectTextToBeInTheDocument("Giving");
+    expectTextToBeInTheDocument("Tickets");
     expectTextToBeInTheDocument("Impact");
   });
 
@@ -38,6 +38,9 @@ describe("WalletLayout", () => {
         {
           walletProviderValue: {
             wallet: "0x6E060041D62fDd76cF27c582f62983b864878E8F",
+          },
+          networkProviderValue: {
+            isValidNetwork: true,
           },
         },
       );
@@ -84,7 +87,7 @@ describe("WalletLayout", () => {
         </WalletLayout>,
       );
 
-      expectTextNotToBeInTheDocument("Treasure");
+      expectTextNotToBeInTheDocument("Giving");
       expectTextNotToBeInTheDocument("Causes");
       expectTextNotToBeInTheDocument("Impact");
     });

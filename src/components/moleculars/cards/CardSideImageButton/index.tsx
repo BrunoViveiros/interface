@@ -1,12 +1,12 @@
 import React from "react";
 import theme from "styles/theme";
-import Button from "components/atomics/Button";
+import Button from "components/atomics/buttons/Button";
 import RibonsSparkleNumber from "components/atomics/RibonsSparkleNumber";
+import checkIcon from "assets/icons/check-icon.svg";
 import * as S from "./styles";
-import checkIcon from "./assets/check-icon.svg";
 
-const { colors } = theme;
-const { ribonBlue, ribonWhite } = colors;
+const { neutral10 } = theme.colors;
+const { primary } = theme.colors.brand;
 
 export type Props = {
   backgroundColor?: string;
@@ -21,12 +21,13 @@ export type Props = {
   counter?: number;
   isCollected?: boolean;
 };
+
 function CardSideImageButton({
   icon,
   ribons,
   title,
-  buttonTextColor = "white",
-  buttonBackgroundColor = ribonBlue,
+  buttonTextColor = neutral10,
+  buttonBackgroundColor = primary[300],
   buttonText,
   description,
   onClick,
@@ -35,14 +36,16 @@ function CardSideImageButton({
 }: Props): JSX.Element {
   function renderCollectedButton() {
     return (
-      <Button
-        text={buttonText || ""}
-        textColor={isCollected ? ribonBlue : buttonTextColor}
-        backgroundColor={isCollected ? ribonWhite : buttonBackgroundColor}
-        borderColor={ribonBlue}
-        leftIcon={isCollected ? checkIcon : undefined}
-        onClick={() => {}}
-      />
+      buttonText && (
+        <Button
+          text={buttonText}
+          textColor={isCollected ? primary[300] : buttonTextColor}
+          backgroundColor={isCollected ? neutral10 : buttonBackgroundColor}
+          borderColor={primary[300]}
+          leftIcon={isCollected ? checkIcon : undefined}
+          onClick={() => {}}
+        />
+      )
     );
   }
 
@@ -69,7 +72,7 @@ function CardSideImageButton({
                 <S.Description>{description}</S.Description>
               </S.DescriptionContainer>
             )}
-            {buttonText && renderCollectedButton()}
+            {renderCollectedButton()}
           </S.TextContainer>
         </S.Content>
       </S.CardSection>

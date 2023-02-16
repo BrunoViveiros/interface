@@ -2,6 +2,7 @@ import { screen } from "@testing-library/react";
 import {
   mockLogErrorFunction,
   mockLogEventFunction,
+  mockNavigateBackFunction,
   mockNavigationFunction,
 } from "../../setupTests";
 
@@ -15,6 +16,17 @@ export function expectTextNotToBeInTheDocument(text: string) {
 
 export function expectImageToBeInTheDocument(alt: string) {
   return expect(screen.getByAltText(alt)).toBeInTheDocument();
+}
+
+export function expectImageNotToBeInTheDocument(alt: string) {
+  return expect(screen.queryByAltText(alt)).not.toBeInTheDocument();
+}
+
+export function expectDisplayValueToBeInTheDocument(value: string) {
+  return expect(screen.getByDisplayValue(value)).toBeInTheDocument();
+}
+export function expectInputToHaveValue(label: string, value: any) {
+  return expect(screen.getByLabelText(label)).toHaveValue(value);
 }
 
 export function expectLogErrorToHaveBeenCalled(error?: any) {
@@ -48,4 +60,8 @@ export function expectPageToNavigateTo(
     pathname,
     state,
   });
+}
+
+export function expectPageToNavigateBack() {
+  return expect(mockNavigateBackFunction).toHaveBeenCalled();
 }

@@ -1,109 +1,215 @@
-import React, { Suspense } from "react";
+import React, { Suspense, useEffect } from "react";
 import { Switch, Route } from "react-router-dom";
 import WalletProvider from "contexts/walletContext";
 import CausesPage from "pages/donations/CausesPage";
-import CurrentUserProvider from "contexts/currentUserContext";
 import ConfirmEmailPage from "pages/donations/ConfirmEmailPage";
 import DonationDonePage from "pages/donations/DonationDonePage";
-import DonationInProcessPage from "pages/donations/DonationInProcessPage";
+import DonationDoneCausePage from "pages/donations/DonationDoneCausePage";
 import ImpactPage from "pages/users/ImpactPage";
 import MainLayout from "layouts/MainLayout";
-import FundPage from "pages/promoters/FundPage";
-import SupportFundPage from "pages/promoters/SupportFundPage";
+import TreasurePage from "pages/promoters/TreasurePage";
+import SupportTreasurePage from "pages/promoters/SupportTreasurePage";
+import SupportCausePage from "pages/promoters/SupportCausePage";
+import BillingInformationPage from "pages/promoters/SupportTreasurePage/CardSection/BillingInformationPage";
+import PaymentInformationPage from "pages/promoters/SupportTreasurePage/CardSection/PaymentInformationPage";
 import GivingsPage from "pages/promoters/GivingsPage";
 import WalletLayout from "layouts/WalletLayout";
+import CardPaymentInformationProvider from "contexts/cardPaymentInformationContext";
+import NetworkProvider from "contexts/networkContext";
+import CausesProvider from "contexts/causesContext";
+import CommunityAddPage from "pages/promoters/SupportCausePage/CommunityAddPage";
+import PostDonationPage from "pages/donations/PostDonationPage";
+import CryptoPaymentProvider from "contexts/cryptoPaymentContext";
+import SupportNonProfitPage from "pages/promoters/SupportNonProfitPage";
+import PaymentPage from "pages/promoters/PaymentPage";
+import { useLocation } from "react-router";
+import { logPageView } from "lib/events";
+import AppInDevelopmentPage from "pages/users/AppInDevelopmentPage";
 import Navigation from "./Navigation";
 
 function RoutesComponent(): JSX.Element {
+  const location = useLocation();
+
+  useEffect(() => {
+    const urlName = location.pathname.replace(/\/\d+/, "");
+    const { search, state } = location;
+
+    logPageView(urlName, search, state);
+  }, [location]);
+
   return (
     <Switch>
       <Route path="/" exact>
         <Suspense fallback={<div />}>
           <WalletProvider>
-            <CurrentUserProvider>
+            <CausesProvider>
               <MainLayout>
                 <CausesPage />
               </MainLayout>
-            </CurrentUserProvider>
+            </CausesProvider>
           </WalletProvider>
+        </Suspense>
+      </Route>
+
+      <Route path="/app-in-development" exact>
+        <Suspense fallback={<div />}>
+          <AppInDevelopmentPage />
         </Suspense>
       </Route>
 
       <Route path="/confirm-email" exact>
         <Suspense fallback={<div />}>
-          <CurrentUserProvider>
-            <Navigation />
-            <ConfirmEmailPage />
-          </CurrentUserProvider>
+          <Navigation />
+          <ConfirmEmailPage />
         </Suspense>
       </Route>
 
       <Route path="/donation-done" exact>
         <Suspense fallback={<div />}>
-          <CurrentUserProvider>
-            <DonationDonePage />
-          </CurrentUserProvider>
+          <DonationDonePage />
         </Suspense>
       </Route>
 
-      <Route path="/donation-in-process" exact>
+      <Route path="/donation-done-cause" exact>
         <Suspense fallback={<div />}>
-          <CurrentUserProvider>
-            <DonationInProcessPage />
-          </CurrentUserProvider>
+          <DonationDoneCausePage />
+        </Suspense>
+      </Route>
+
+      <Route path="/post-donation" exact>
+        <Suspense fallback={<div />}>
+          <PostDonationPage />
         </Suspense>
       </Route>
 
       <Route path="/impact" exact>
         <Suspense fallback={<div />}>
-          <CurrentUserProvider>
+          <WalletProvider>
             <MainLayout>
               <ImpactPage />
             </MainLayout>
-          </CurrentUserProvider>
+          </WalletProvider>
         </Suspense>
       </Route>
 
-      <Route path="/promoters/fund" exact>
+      <Route path="/promoters/treasure" exact>
         <Suspense fallback={<div />}>
-          <CurrentUserProvider>
+          <NetworkProvider>
+            <WalletProvider>
+              <WalletLayout hasBackButton hideNavigation hideWallet>
+                <TreasurePage />
+              </WalletLayout>
+            </WalletProvider>
+          </NetworkProvider>
+        </Suspense>
+      </Route>
+
+      <Route path="/promoters/support-treasure" exact>
+        <Suspense fallback={<div />}>
+          <NetworkProvider>
             <WalletProvider>
               <WalletLayout>
-                <FundPage />
+                <CardPaymentInformationProvider>
+                  <SupportTreasurePage />
+                </CardPaymentInformationProvider>
               </WalletLayout>
             </WalletProvider>
-          </CurrentUserProvider>
+          </NetworkProvider>
         </Suspense>
       </Route>
 
-      <Route path="/promoters/support-fund" exact>
+      <Route path="/promoters/support-cause" exact>
         <Suspense fallback={<div />}>
-          <CurrentUserProvider>
+          <NetworkProvider>
             <WalletProvider>
-              <WalletLayout hideNavigation hasBackButton>
-                <SupportFundPage />
+              <WalletLayout>
+                <CardPaymentInformationProvider>
+                  <CryptoPaymentProvider>
+                    <SupportCausePage />
+                  </CryptoPaymentProvider>
+                </CardPaymentInformationProvider>
               </WalletLayout>
             </WalletProvider>
-          </CurrentUserProvider>
+          </NetworkProvider>
+        </Suspense>
+      </Route>
+
+      <Route path="/promoters/support-treasure/billing-information" exact>
+        <Suspense fallback={<div />}>
+          <WalletProvider>
+            <WalletLayout hasBackButton>
+              <CardPaymentInformationProvider>
+                <BillingInformationPage />
+              </CardPaymentInformationProvider>
+            </WalletLayout>
+          </WalletProvider>
+        </Suspense>
+      </Route>
+
+      <Route path="/promoters/support-treasure/payment-information" exact>
+        <Suspense fallback={<div />}>
+          <WalletProvider>
+            <WalletLayout hasBackButton>
+              <CardPaymentInformationProvider>
+                <PaymentInformationPage />
+              </CardPaymentInformationProvider>
+            </WalletLayout>
+          </WalletProvider>
         </Suspense>
       </Route>
 
       <Route path="/promoters/show-givings" exact>
         <Suspense fallback={<div />}>
-          <CurrentUserProvider>
-            <WalletProvider>
-              <WalletLayout hasBackButton>
-                <GivingsPage />
-              </WalletLayout>
-            </WalletProvider>
-          </CurrentUserProvider>
+          <WalletProvider>
+            <WalletLayout hasBackButton>
+              <GivingsPage />
+            </WalletLayout>
+          </WalletProvider>
         </Suspense>
       </Route>
 
-      <Route path="/fund" exact>
+      <Route path="/treasure" exact>
         <MainLayout>
           <div />
         </MainLayout>
+      </Route>
+
+      <Route path="/promoters/community-add" exact>
+        <Suspense fallback={<div />}>
+          <CardPaymentInformationProvider>
+            <CommunityAddPage />
+          </CardPaymentInformationProvider>
+        </Suspense>
+      </Route>
+
+      <Route path="/promoters/support-non-profit" exact>
+        <Suspense fallback={<div />}>
+          <NetworkProvider>
+            <WalletProvider>
+              <WalletLayout>
+                <CardPaymentInformationProvider>
+                  <CryptoPaymentProvider>
+                    <SupportNonProfitPage />
+                  </CryptoPaymentProvider>
+                </CardPaymentInformationProvider>
+              </WalletLayout>
+            </WalletProvider>
+          </NetworkProvider>
+        </Suspense>
+      </Route>
+
+      <Route path="/promoters/payment" exact>
+        <Suspense fallback={<div />}>
+          <NetworkProvider>
+            <WalletProvider>
+              <WalletLayout hideNavigation>
+                <CardPaymentInformationProvider>
+                  <PaymentPage />
+                </CardPaymentInformationProvider>
+              </WalletLayout>
+            </WalletProvider>
+          </NetworkProvider>
+        </Suspense>
       </Route>
     </Switch>
   );

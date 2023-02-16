@@ -1,76 +1,39 @@
-import styled, { css } from "styled-components";
-import ReactModal from "react-modal";
-
-export const BlankModal = styled(ReactModal)`
-  background-color: #fff;
-  width: 100%;
-  border-radius: 16px;
-  margin: 16px;
-  max-width: 360px;
-`;
-
-export const Modal = styled(BlankModal)`
-  button,
-  a {
-    margin-bottom: 8px;
-
-    &:last-child {
-      margin: 0;
-    }
-  }
-`;
+import Button from "components/atomics/buttons/Button";
+import styled from "styled-components";
+import { Modal } from "../ModalBlank/styles";
 
 export const ModalWithIcon = styled(Modal)`
-  padding: 16px;
-`;
-
-export const ModalWithImage = styled(Modal)`
-  overflow: hidden;
-`;
-
-export const Container = styled.div`
-  padding: 16px;
+  padding: ${({ theme }) => theme.spacing(16)};
 `;
 
 export const Icon = styled.img`
-  display: block;
-  width: 96px;
   height: 96px;
-  margin: -64px auto 8px auto;
-`;
-
-export const Image = styled.img`
-  width: 100%;
-  height: 152px;
+  margin: -64px auto 8px;
+  display: block;
 `;
 
 type TitleProps = {
   color?: string;
 };
 
-export const Title = styled.h2<TitleProps>`
-  ${({ theme, color }) => css`
-    text-align: center;
-    color: ${color || theme.colors.ribonBlack};
-  `}
-`;
-
-export const Body = styled.h3`
-  color: #82aabe;
+export const Title = styled.h3<TitleProps>`
   text-align: center;
-  margin: 8px 0px 20px;
+  color: ${({ theme, color }) => color || theme.colors.neutral[800]};
 `;
 
-export const HighlightedText = styled.p`
-  ${({ theme }) => css`
-    margin-top: 16px;
-    font-weight: bold;
-    text-align: center;
-    color: ${theme.colors.ribonBlack};
-    font-size: 16px;
-  `}
+export const Body = styled.h4`
+  margin: ${({ theme }) => theme.spacing(8, 0, 20)};
+  text-align: center;
+  color: ${({ theme }) => theme.colors.neutral[500]};
 `;
+
 export const RowsModalRow = styled.div`
+  margin-bottom: ${({ theme }) => theme.spacing(32)};
   display: flex;
-  margin-bottom: 28px;
+`;
+
+export const SupportButton = styled(Button)`
+  border: 1px solid ${({ theme }) => theme.colors.brand.primary[300]};
+  background-color: ${({ theme }) => theme.colors.neutral10};
+  color: ${({ theme, color }) => color || theme.colors.brand.primary[300]};
 `;

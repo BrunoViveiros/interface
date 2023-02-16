@@ -1,18 +1,19 @@
 import styled from "styled-components";
+import { defaultBodySmSemibold } from "styles/typography/default";
 
 export const NotificationContainer = styled.div`
-  box-sizing: border-box;
   position: fixed;
-  font-size: 14px;
-  z-index: 9999;
-  bottom: 12px;
   right: 12px;
+  bottom: 12px;
+  z-index: ${({ theme }) => theme.zindex.toast};
+  box-sizing: border-box;
   animation: toast-in-right 0.7s;
 
   @keyframes toast-in-right {
     from {
       transform: translateX(100%);
     }
+
     to {
       transform: translateX(0);
     }
@@ -20,45 +21,45 @@ export const NotificationContainer = styled.div`
 `;
 
 export const NotificationToast = styled.div`
-  background: #fff;
-  transition: 0.3s ease;
-  position: relative;
-  pointer-events: auto;
-  overflow: hidden;
-  padding: 20px;
-  margin: 0 0 6px;
-  margin-bottom: 15px;
   width: 336px;
-  color: #000;
-  opacity: 0.9;
-  box-shadow: 0px 4px 12px rgba(24, 86, 105, 0.15);
+  margin: ${({ theme }) => theme.spacing(0, 0, 8)};
+  margin-bottom: ${({ theme }) => theme.spacing(16)};
+  padding: ${({ theme }) => theme.spacing(20)};
   border-radius: 8px;
-  bottom: 12px;
+  position: relative;
   right: 12px;
+  bottom: 12px;
+  overflow: hidden;
+  background: ${({ theme }) => theme.colors.neutral10};
+  color: ${({ theme }) => theme.colors.neutral[800]};
+  box-shadow: 0 4px 12px ${({ theme }) => theme.colors.defaultShadow};
+  opacity: 0.9;
+  pointer-events: auto;
+  transition: 0.3s ease;
   animation: toast-in-right 0.7s;
+
   &:hover {
-    box-shadow: 0px 4px 12px rgba(24, 86, 105, 0.15);
+    box-shadow: 0 4px 12px ${({ theme }) => theme.colors.defaultShadow};
     opacity: 1;
     cursor: pointer;
   }
 `;
 
 export const Message = styled.span`
-  margin: 0;
-  text-align: left;
+  margin: ${({ theme }) => theme.spacing(0)};
   margin-left: -1px;
   overflow: hidden;
+  text-align: left;
   text-overflow: ellipsis;
   white-space: nowrap;
-  font-size: 14px;
-  color: #fff;
+  color: ${({ theme }) => theme.colors.neutral10};
 `;
 
 export const Link = styled.span`
+  ${defaultBodySmSemibold}
+
   float: right;
-  color: #fff;
-  font-size: 14px;
-  font-weight: bold;
+  color: ${({ theme }) => theme.colors.neutral10};
 `;
 
 export const LinkNotificationToast = styled.a`

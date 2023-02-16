@@ -16,7 +16,7 @@ function Header({
 }: Props): JSX.Element {
   return (
     <S.Container>
-      <S.LeftContainer>
+      <S.InsideContainer>
         {hasBackButton ? (
           <S.BackButtonImage
             src={ArrowLeft}
@@ -26,12 +26,18 @@ function Header({
         ) : (
           <>
             <S.Logo src={Logo} alt="logo" />
-            <S.Divider>|</S.Divider>
-            <S.Logo src={sideLogo} alt="side-logo" />
+            {sideLogo && (
+              <>
+                <S.Divider>|</S.Divider>
+                <S.Logo src={sideLogo} alt="side-logo" />{" "}
+              </>
+            )}
           </>
         )}
-      </S.LeftContainer>
-      {rightComponent && <S.RightContainer>{rightComponent}</S.RightContainer>}
+      </S.InsideContainer>
+      {rightComponent && (
+        <S.InsideContainer>{rightComponent}</S.InsideContainer>
+      )}
     </S.Container>
   );
 }

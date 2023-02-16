@@ -1,12 +1,12 @@
 import { useTranslation } from "react-i18next";
 import { useLocation } from "react-router-dom";
-import { logEvent } from "services/analytics";
+import { logEvent } from "lib/events";
 import CausesIconOn from "./assets/causesIconOn.svg";
 import CausesIconOff from "./assets/causesIconOff.svg";
 import ImpactIconOn from "./assets/impactIconOn.svg";
 import ImpactIconOff from "./assets/impactIconOff.svg";
-import TreasureIconOff from "./assets/treasureIconOff.svg";
-import TreasureIconOn from "./assets/treasureIconOn.svg";
+import GivingIconOn from "./assets/givingIconOn.svg";
+import GivingIconOff from "./assets/givingIconOff.svg";
 import * as S from "./styles";
 import NavigationLink from "./NavigationLink";
 
@@ -20,7 +20,15 @@ function Navigation(): JSX.Element {
   const location = useLocation();
   const { search } = location;
 
-  function isInPath(path: string) {
+  function isInPath(route: any): boolean {
+    const { menuOptions, path } = route;
+
+    if (menuOptions) {
+      return menuOptions.some((menuOption: any) =>
+        [menuOption.path].includes(location.pathname),
+      );
+    }
+
     return [path].includes(location.pathname);
   }
 
@@ -33,11 +41,23 @@ function Navigation(): JSX.Element {
       event: "homeNavBtn_click",
     },
     {
-      path: "/promoters/fund",
-      iconOn: TreasureIconOn,
-      iconOff: TreasureIconOff,
-      title: t("treasurePageTitle"),
-      event: "fundNavBtn_click",
+      path: "/promoters/support-cause",
+      iconOn: GivingIconOn,
+      iconOff: GivingIconOff,
+      title: t("givingPageTitle"),
+      event: "givingNavBtn_click",
+      menuOptions: [
+        {
+          path: "/promoters/support-cause",
+          title: t("communityMenuItem"),
+          event: "communityMenuBtn_click",
+        },
+        {
+          path: "/promoters/support-non-profit",
+          title: t("directDonationMenuItem"),
+          event: "directDonationMenuBtn_click",
+        },
+      ],
     },
     {
       path: "/impact",
@@ -59,9 +79,14 @@ function Navigation(): JSX.Element {
           key={route.path}
           onClick={() => handleEvent(route.event)}
           to={{ pathname: route.path, search }}
-          icon={isInPath(route.path) ? route.iconOn : route.iconOff}
+          icon={isInPath(route) ? route.iconOn : route.iconOff}
           title={route.title}
-          enabled={isInPath(route.path)}
+          enabled={isInPath(route)}
+          menuOptions={route?.menuOptions?.map((option) => ({
+            ...option,
+            onClick: () => handleEvent(option.event),
+            search,
+          }))}
         />
       ))}
     </S.Container>

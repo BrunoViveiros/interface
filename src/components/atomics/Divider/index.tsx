@@ -3,7 +3,7 @@ import theme from "styles/theme";
 import * as S from "./styles";
 
 const { colors } = theme;
-const { ribonWhite } = colors;
+const { neutral10 } = colors;
 
 export type Props = {
   text?: string;
@@ -12,7 +12,7 @@ export type Props = {
 };
 function Divider({
   text,
-  color = ribonWhite,
+  color = neutral10,
   width = "100%",
 }: Props): JSX.Element {
   return (

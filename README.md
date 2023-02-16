@@ -36,18 +36,26 @@ description of the Ribon protocol, which is built on Matic/Polygon, a layer 2 in
 
 In order to run the project from a local environment we need `node>=16`, `npm>=8` installed on our development machines. We also recommend `yarn>=1.22` to manage dependencies but is optional. The following steps are using the yarn CLI.
 
-**NOTE:** You may will need the .env file with some environment variables. You can get it by accessing our [Discord Server](https://discord.gg/DBcwmDrkpy) and requesting it on the #Development channel
+**NOTE:** You may need the .env file with some environment variables. You can get it by accessing our [Discord Server](https://discord.gg/DBcwmDrkpy) and requesting it on the #Development channel
 
 ## 🖥️ Local development
 
 To clone the repo:
+
 ```shell
-git clone git@github.com:ribonapp/app.git
+git clone git@github.com:RibonDAO/interface.git
 ```
+
 To install the application:
 
 ```shell
 yarn install
+```
+
+Copy the .env.example to a .env file
+
+```shell
+cp .env.example .env
 ```
 
 To start a local copy of the app on port `3000`:
@@ -55,6 +63,21 @@ To start a local copy of the app on port `3000`:
 ```shell
 yarn start
 ```
+
+## With Dockerfile
+
+- clone this repository: `git clone git@github.com:RibonDAO/interface.git`
+- copy the .docker-compose.yml.sample to a .docker-compose.yml file `cp .docker-compose.yml.sample .docker-compose.yml`
+- run docker-compose up
+
+Your project will be running on http://localhost:3000/
+
+or if you already have the core-api project on your machine you can use our script to run the whole project:
+
+- clone this repository: `git clone git@github.com:RibonDAO/interface.git`
+- clone the core-api repository: `git clone git@github.com:RibonDAO/core-api.git`
+- run ./script.sh inside one of the projects
+  The app will be running on http://localhost:3000/
 
 ### 🧪 Test
 
@@ -72,10 +95,16 @@ yarn testCoverage
 
 ### 🎨 Code linting
 
-To check the code and styles quality, use the following command:
+To check the code quality, use the following command:
 
 ```shell
 yarn lint
+```
+
+To check the styles quality, use the following command:
+
+```shell
+yarn lint:css
 ```
 
 ### 🚀 Production deployment
@@ -98,17 +127,16 @@ yarn storybook
 
 ### 💾 Back-End environments
 
-In local development the data comes from the [development API](https://github.com/RibonDAO/core-api) (hosted on AWS). There are still two another environments:
+In local development the data comes from the [development API](https://github.com/RibonDAO/core-api) (hosted on AWS). There are still two other environments:
 
- - Staging: [https://ribon-dapp-staging.web.app/?integration_id=1](https://ribon-dapp-staging.web.app/?integration_id=1)
- - Production: [https://dapp.ribon.io/?integration_id=1](https://dapp.ribon.io/?integration_id=1)
+- Staging: [https://ribon-dapp-staging.web.app/?integration_id=1](https://ribon-dapp-staging.web.app/?integration_id=1)
+- Production: [https://dapp.ribon.io/?integration_id=1](https://dapp.ribon.io/?integration_id=1)
 
 The staging environment is a production replica, but with a different database. Every time a PR is merged into _main_ this environment is updated with the new code
 
 The production environment is the environment that users are in. Every new merge in main updates this environment
 
 Both environments are hosted on firebase.
-
 
 ## 🤝 Contributing
 
@@ -117,4 +145,4 @@ We encourage you to contribute! Please check out the [Contributing guide](https:
 ## 🍕 Community
 
 Got Questions? Join the conversation in our [Discord](https://discord.gg/DBcwmDrkpy).  
-Find RibonDAO updates in our [Twitter](https://www.twitter.com/RibonDAO).
+Find RibonDAO updates on our [Twitter](https://www.twitter.com/RibonDAO).

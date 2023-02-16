@@ -1,11 +1,11 @@
 import React from "react";
 import Divider from "components/atomics/Divider";
 import theme from "styles/theme";
-import Loader from "components/atomics/Loader";
+import Spinner from "components/atomics/Spinner";
 import * as S from "./styles";
 
 const { colors } = theme;
-const { ribonWhite } = colors;
+const { neutral10 } = colors;
 
 export type Props = {
   title?: string;
@@ -29,10 +29,10 @@ function CardFullImage({
       </S.ImageContainer>
       <S.TextContainer>
         <S.TitleContainer>
-          {loading && <Loader color={ribonWhite} width={25} height={25} />}
+          {loading && <Spinner strokeColor={neutral10} size="20" />}
           {title && <S.Title>{title}</S.Title>}
         </S.TitleContainer>
-        <Divider color={ribonWhite} width="80px" />
+        <Divider color={neutral10} width="80px" />
         {subtitle && <S.Subtitle>{subtitle}</S.Subtitle>}
       </S.TextContainer>
     </S.Container>

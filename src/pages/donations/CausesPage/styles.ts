@@ -1,64 +1,71 @@
-import styled, { css } from "styled-components";
+import styled from "styled-components";
+import { stylizedDisplayLg } from "styles/typography/stylized";
 
 export const Container = styled.div``;
 
 export const BodyContainer = styled.div`
   width: 100%;
 
-  ${({ theme }) => css`
-    @media (min-width: ${theme.breakpoints.pad}) {
-      display: flex;
-      flex-direction: column;
-    }
-  `}
+  @media (min-width: ${({ theme }) => theme.breakpoints.pad}) {
+    display: flex;
+    flex-direction: column;
+  }
 `;
 
 export const Title = styled.h1`
-  text-transform: uppercase;
-  margin: 0;
-  font-weight: 900;
+  ${stylizedDisplayLg}
 
-  ${({ theme }) => css`
-    @media (min-width: ${theme.breakpoints.pad}) {
-      font-size: 36px;
-    }
-  `}
+  margin-right: ${({ theme }) => theme.spacing(40)};
 `;
-
-export const CausesContainer = styled.div`
-  ${({ theme }) => css`
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    margin-top: 20px;
-    column-gap: 8px;
-    row-gap: 8px;
-
-    @media (min-width: ${theme.breakpoints.pad}) {
-      margin-top: 56px;
-      width: 70%;
-      row-gap: 16px;
-      column-gap: 12px;
-    }
-  `}
-`;
-
-export const CausesCardContainer = styled.div`
-  width: 100%;
+export const TitleContainer = styled.div`
+  margin-bottom: ${({ theme }) => theme.spacing(32)};
   display: flex;
+  flex-direction: row;
   align-items: center;
-  justify-content: center;
 `;
 
-export const FooterText = styled.h5`
-  ${({ theme }) => css`
-    line-height: 19px;
-    color: ${theme.colors.darkGray};
-    text-align: center;
-    font-weight: 400;
+export const NonProfitsContainer = styled.div`
+  margin-top: ${({ theme }) => theme.spacing(20)};
+`;
 
-    a {
-      color: ${theme.colors.ribonBlue};
-      text-decoration: none;
+export const CausesCardContainer = styled.div``;
+
+export const NonProfitsListContainer = styled.div`
+  margin-inline: -16px;
+
+  @media (min-width: ${({ theme }) => theme.breakpoints.pad}) {
+    margin-inline: 0;
+    max-width: 900px;
+  }
+`;
+
+export const FooterText = styled.p`
+  text-align: center;
+  color: ${({ theme }) => theme.colors.neutral[500]};
+
+  a {
+    text-decoration: none;
+    color: ${({ theme }) => theme.colors.brand.primary[300]};
+  }
+`;
+
+export const CardWrapper = styled.div`
+  margin-bottom: ${({ theme }) => theme.spacing(32)};
+  margin-left: ${({ theme }) => theme.spacing(16)};
+  overflow: visible;
+
+  @media (min-width: ${({ theme }) => theme.breakpoints.pad}) {
+    margin-inline: 12px;
+    margin-left: 0px;
+
+    :nth-of-type(1) {
+      margin-left: 0px;
     }
-  `}
+  }
+`;
+
+export const TooltipSection = styled.div`
+  margin-bottom: ${({ theme }) => theme.spacing(32)};
+  display: flex;
+  justify-content: center;
 `;

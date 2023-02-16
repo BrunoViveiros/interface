@@ -1,9 +1,13 @@
 import React from "react";
 import ReactDOM from "react-dom";
+import { initializeAmplitude } from "services/analytics/amplitude";
+import { initializeFirebase } from "services/analytics/firebase";
+import { initializeMixpanel } from "services/analytics/mixpanel";
+import { initializeSentry } from "services/analytics/sentry";
+import { initializeApi } from "services/api";
 import App from "./App";
 import reportWebVitals from "./reportWebVitals";
 import "./i18n";
-import { initializeFirebase, initializeSentry } from "./services";
 
 declare global {
   interface Window {
@@ -11,7 +15,10 @@ declare global {
   }
 }
 
+initializeApi();
+initializeAmplitude();
 initializeFirebase();
+initializeMixpanel();
 initializeSentry();
 
 ReactDOM.render(

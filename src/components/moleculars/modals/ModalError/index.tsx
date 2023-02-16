@@ -1,6 +1,9 @@
-import React from "react";
-import Button from "components/atomics/Button";
+import React, { useState } from "react";
+import Button from "components/atomics/buttons/Button";
 import ReactModal from "react-modal";
+import { newLogEvent } from "lib/events";
+import { ZendeskOpenChat } from "config/zendesk/features";
+import { useTranslation } from "react-i18next";
 import * as S from "./styles";
 import errorIcon from "./assets/alert.svg";
 import warningIcon from "./assets/warning-icon.svg";
@@ -16,6 +19,8 @@ export type Props = {
   customStyles?: ReactModal.Styles;
   buttonText?: string;
   warning?: boolean;
+  eventName?: string;
+  eventParams?: Record<string, any>;
 };
 function ModalError({
   visible = false,
@@ -27,7 +32,23 @@ function ModalError({
   customStyles,
   buttonText,
   warning,
+  eventName,
+  eventParams,
 }: Props): JSX.Element {
+  const [logged, SetLogged] = useState(false);
+
+  if (visible && eventName && !logged) {
+    newLogEvent("view", eventName, eventParams);
+    SetLogged(true);
+  }
+
+  const { t } = useTranslation("translation", {
+    keyPrefix: "donations.causesPage.modalForm",
+  });
+
+  const handleClick = () => {
+    ZendeskOpenChat();
+  };
   return (
     <S.ModalWithIcon
       isOpen={visible}
@@ -39,6 +60,7 @@ function ModalError({
       <S.Icon src={warning ? warningIcon : errorIcon} />
       <S.Title color={titleColor}>{title}</S.Title>
       <S.Body>{body}</S.Body>
+      <S.SupportButton text={t("accessUserSupport")} onClick={handleClick} />
       {buttonText && <Button text={buttonText} onClick={onClose} />}
     </S.ModalWithIcon>
   );

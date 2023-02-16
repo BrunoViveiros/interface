@@ -1,70 +1,105 @@
-import ButtonRound from "components/atomics/buttons/ButtonRound";
+import Button from "components/atomics/buttons/Button";
 import styled from "styled-components";
+
+import {
+  defaultBodyMdRegular,
+  defaultBodyMdBold,
+} from "styles/typography/default";
+import { stylizedDisplayLg } from "styles/typography/stylized";
 
 export const Container = styled.div`
   display: flex;
   flex-direction: column;
-  text-align: left;
   justify-content: flex-start;
+  text-align: left;
 
   @media (min-width: ${({ theme }) => theme.breakpoints.pad}) {
-    padding: 0;
+    padding: ${({ theme }) => theme.spacing(0)};
   }
 `;
 
 export const Title = styled.h1`
-  color: ${({ theme }) => theme.colors.ribonBlack};
-  font-weight: 900;
-  line-height: 1.6;
-  margin: 0;
+  ${stylizedDisplayLg}
 
-  @media (min-width: ${({ theme }) => theme.breakpoints.pad}) {
-    font-size: 36px;
-  }
+  margin: ${({ theme }) => theme.spacing(0)};
+  color: ${({ theme }) => theme.colors.neutral[800]};
 `;
 
-export const Subtitle = styled.h2`
-  font-size: 14px;
-  color: ${({ theme }) => theme.colors.darkGray};
-  @media (min-width: ${({ theme }) => theme.breakpoints.pad}) {
-    font-size: 16px;
-  }
+export const Subtitle = styled.h5`
+  color: ${({ theme }) => theme.colors.neutral[500]};
 `;
 
 export const CardsButtonContainer = styled.div`
+  margin-top: ${({ theme }) => theme.spacing(32)};
   display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  align-self: flex-start;
-`;
-
-export const Wrapper = styled.div`
-  margin-top: 28px;
-  display: flex;
-  justify-content: space-evenly;
+  flex-direction: row;
   flex-wrap: wrap;
   gap: 8px;
-  @media (min-width: ${({ theme }) => theme.breakpoints.desktop}) {
-    justify-content: flex-start;
+  align-items: center;
+  align-self: flex-start;
+
+  @media (min-width: ${({ theme }) => theme.breakpoints.pad}) {
+    flex-wrap: nowrap;
+    align-self: normal;
   }
 `;
 
-export const Button = styled(ButtonRound)`
-  width: 100px;
-  align-self: center;
-  margin: 16px 0;
+export const CardsContainer = styled.div`
+  width: 100%;
+  min-height: 216px;
+  margin-top: ${({ theme }) => theme.spacing(32)};
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+`;
+
+export const CardButton = styled(Button)`
+  width: 135px;
+  margin: ${({ theme }) => theme.spacing(16, 0)};
+  border: 1px solid ${({ theme }) => theme.colors.brand.primary[300]};
+  background-color: ${({ theme }) => theme.colors.neutral10};
+  color: ${({ theme }) => theme.colors.brand.primary[300]};
 `;
 
 export const EmptySectionContainer = styled.div`
+  width: 100%;
+  margin-top: ${({ theme }) => theme.spacing(40)};
   display: flex;
   flex-direction: column;
+  gap: 16px;
   align-items: center;
-  justify-content: center;
-  align-self: flex-start;
-  height: calc(100% - 200px);
+  align-self: center;
+  text-align: center;
+`;
+
+export const EmptyImage = styled.img`
+  max-width: 300px;
+`;
+
+export const EmptyTitle = styled.p`
+  ${defaultBodyMdBold}
+
   width: 100%;
+  color: ${({ theme }) => theme.colors.neutral[800]};
+`;
+
+export const EmptyText = styled.span`
+  ${defaultBodyMdRegular}
+
+  max-width: 392px;
+  color: ${({ theme }) => theme.colors.neutral[500]};
+`;
+
+export const EmptyButton = styled(Button)`
+  width: 196px;
+  color: ${({ theme }) => theme.colors.brand.primary[800]};
+`;
+
+export const ImpactMenuContainer = styled.div`
+  width: 100%;
+
   @media (min-width: ${({ theme }) => theme.breakpoints.pad}) {
-    height: calc(100% - 400px);
+    width: 960px;
+    padding-right: ${({ theme }) => theme.spacing(12)};
   }
 `;

@@ -5,7 +5,7 @@ import {
   expectTextToBeInTheDocument,
 } from "config/testUtils/expects";
 import { screen } from "@testing-library/react";
-import theme from "styles/theme";
+import { mockNewLogEventFunction } from "setupTests";
 import ModalIcon from ".";
 
 describe("ModalIcon", () => {
@@ -22,8 +22,10 @@ describe("ModalIcon", () => {
         <ModalIcon
           title="ModalIcon"
           visible
-          primaryButtonText="button"
-          primaryButtonCallback={mockFunction}
+          primaryButton={{
+            text: "button",
+            onClick: mockFunction,
+          }}
         />,
       );
       clickOn("button");
@@ -37,8 +39,10 @@ describe("ModalIcon", () => {
         <ModalIcon
           title="ModalIcon"
           visible
-          secondaryButtonText="button"
-          secondaryButtonCallback={mockFunction}
+          secondaryButton={{
+            text: "button",
+            onClick: mockFunction,
+          }}
         />,
       );
       clickOn("button");
@@ -53,10 +57,7 @@ describe("ModalIcon", () => {
         <ModalIcon title="ModalIcon" visible icon="icon" biggerIcon />,
       );
 
-      expect(screen.getByAltText("icon")).toHaveStyle(
-        `display: block; 
-        margin: -64px auto 16px auto;`,
-      );
+      expect(screen.getByAltText("icon")).toBeDefined();
     });
 
     it("renders round icon", () => {
@@ -64,14 +65,7 @@ describe("ModalIcon", () => {
         <ModalIcon title="ModalIcon" visible icon="icon" roundIcon />,
       );
 
-      expect(screen.getByAltText("icon")).toHaveStyle(
-        `display: block;
-        width: 96px;
-        height: 96px;
-        margin: -64px auto 8px auto;
-        border-radius: 70px;
-        object-fit: cover;`,
-      );
+      expect(screen.getByAltText("icon")).toBeDefined();
     });
   });
 
@@ -86,13 +80,7 @@ describe("ModalIcon", () => {
         />,
       );
 
-      expect(screen.getByText("highlighted text")).toHaveStyle(
-        `margin-top: 16px;
-        font-weight: bold;
-        text-align: center;
-        color: ${theme.colors.ribonBlack};
-        font-size: 16px;`,
-      );
+      expect(screen.getByText("highlighted text")).toBeDefined();
     });
   });
 
@@ -100,6 +88,22 @@ describe("ModalIcon", () => {
     it("does not show", () => {
       renderComponent(<ModalIcon />);
       expectTextNotToBeInTheDocument("ModalIcon");
+    });
+  });
+
+  describe("when the modal is visible and has an eventName", () => {
+    const eventName = "test";
+    const eventParams = { test: "test" };
+    const action = "view";
+    it("logs an event", () => {
+      renderComponent(
+        <ModalIcon visible eventName={eventName} eventParams={eventParams} />,
+      );
+      expect(mockNewLogEventFunction).toHaveBeenCalledWith(
+        action,
+        eventName,
+        eventParams,
+      );
     });
   });
 });

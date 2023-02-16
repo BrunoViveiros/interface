@@ -1,26 +1,49 @@
 import { useTranslation } from "react-i18next";
+import { useAnimationReceiveTicketModal } from "hooks/modalHooks/useAnimationReceiveTicketModal";
 import { MODAL_TYPES } from "contexts/modalContext/helpers";
 import { useEffect } from "react";
-import Ticket from "assets/images/ticket.svg";
+import Integration from "types/entities/Integration";
+import { RIBON_COMPANY_ID } from "utils/constants";
+import RibonIcon from "assets/icons/logo-background-icon.svg";
 import { useModal } from "../useModal";
 
-export function useDonationTicketModal(initialState?: boolean) {
+export function useDonationTicketModal(
+  initialState?: boolean,
+  integration?: Integration,
+) {
   const { t } = useTranslation("translation", {
     keyPrefix: "donations.causesPage",
   });
 
-  const { show, hide } = useModal({
-    type: MODAL_TYPES.MODAL_ICON,
-    props: {
-      title: t("donationModalTitle"),
-      body: t("donationModalBody"),
-      primaryButtonText: t("donationModalButtonText"),
-      primaryButtonCallback: () => {
-        hide();
+  const { showAnimationReceiveTicketModal } = useAnimationReceiveTicketModal();
+
+  const isRibonIntegration = integration?.id === parseInt(RIBON_COMPANY_ID, 10);
+
+  const modalTitle = isRibonIntegration
+    ? t("donationWithRibonModalTitle")
+    : t("donationWithIntegrationModalTitle", {
+        integrationName: integration?.name,
+      });
+
+  const modalDoubleImageProps = {
+    title: modalTitle,
+    body: t("donationWithIntegrationModalSubtitle"),
+    primaryButton: {
+      text: t("donationWithIntegrationModalButtonText"),
+      onClick: () => {
+        showAnimationReceiveTicketModal();
       },
-      onClose: () => hide(),
-      icon: Ticket,
+      eventName: "P1_IntroModal",
     },
+    onClose: () => showAnimationReceiveTicketModal(),
+    leftImage: !isRibonIntegration ? integration?.logo : null,
+    rightImage: RibonIcon,
+    eventName: "P1_IntroModal",
+  };
+
+  const { show, hide } = useModal({
+    type: MODAL_TYPES.MODAL_DOUBLE_IMAGE,
+    props: modalDoubleImageProps,
   });
 
   const showDonationTicketModal = () => {
@@ -29,6 +52,7 @@ export function useDonationTicketModal(initialState?: boolean) {
 
   const hideDonationTicketModal = () => {
     hide();
+    showAnimationReceiveTicketModal();
   };
 
   useEffect(() => {

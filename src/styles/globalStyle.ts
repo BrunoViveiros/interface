@@ -1,14 +1,14 @@
 import { createGlobalStyle, css } from "styled-components";
 import normalize from "./normalize";
-import typography from "./typography";
+import { typography } from "./typography/typography";
 
 const GlobalStyle = createGlobalStyle`
   ${normalize}
   ${typography}
 
   * {
-    margin: 0;
-    padding: 0;
+    margin: ${({ theme }) => theme.spacing(0)};
+    padding: ${({ theme }) => theme.spacing(0)};
     box-sizing: border-box;
     :focus {
       outline: none;
@@ -19,15 +19,12 @@ const GlobalStyle = createGlobalStyle`
     html,
     body,
     #root {
-      min-height: 100vh;
-    }
-
-    body {
-      font-family: ${theme.font};
+      min-height: ${window.innerHeight}px;
+      background: ${theme.colors.neutral10};
     }
 
     #root {
-      display: flex;
+      display: block;
     }
 
     #launcher {

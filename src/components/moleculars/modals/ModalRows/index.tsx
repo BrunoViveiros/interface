@@ -1,5 +1,7 @@
-import Button, { onClickType } from "components/atomics/Button";
+import Button, { ButtonProps } from "components/atomics/buttons/Button";
 import LottieAnimation from "components/atomics/LottieAnimation";
+import { newLogEvent } from "lib/events";
+import { useState } from "react";
 import theme from "styles/theme";
 import { defaultCustomStyles } from "../defaultCustomStyles";
 import * as S from "./styles";
@@ -12,50 +14,56 @@ type RowProps = {
 
 export type Props = {
   visible?: boolean;
+  icon?: string | null;
+  biggerIcon?: boolean;
+  roundIcon?: boolean;
+  altIcon?: string;
   rowsContent?: Record<any, any> | null;
   title?: string | null;
+  body?: string | null;
   titleColor?: string;
-  primaryButtonText?: string | null;
-  primaryButtonLeftIcon?: string | undefined;
-  primaryButtonLink?: string;
-  primaryButtonTextColor?: string;
-  primaryButtonColor?: string;
-  primaryButtonBorderColor?: string;
-  primaryButtonCallback?: onClickType;
-  secondaryButtonText?: string | null;
-  secondaryButtonLeftIcon?: string | undefined;
-  secondaryButtonLink?: string;
-  secondaryButtonTextColor?: string;
-  secondaryButtonColor?: string;
-  secondaryButtonBorderColor?: string;
-  secondaryButtonCallback?: onClickType;
+  primaryButton?: ButtonProps;
+  secondaryButton?: ButtonProps;
   contentLabel?: string;
   children?: JSX.Element[] | null;
   onClose?: () => void;
   animationData?: Record<any, any>;
+  eventName?: string;
+  eventParams?: Record<string, any>;
 };
 
 function ModalRows({
   visible = false,
+  icon = null,
+  biggerIcon = false,
+  roundIcon = false,
+  altIcon = "icon",
   rowsContent = null,
+  children = null,
   title = null,
+  body = null,
   titleColor,
-  primaryButtonText = null,
-  primaryButtonLeftIcon = undefined,
-  primaryButtonTextColor = "white",
-  primaryButtonColor = theme.colors.ribonBlue,
-  primaryButtonBorderColor,
-  secondaryButtonText = null,
-  secondaryButtonLeftIcon = undefined,
-  secondaryButtonTextColor = theme.colors.darkGray,
-  secondaryButtonBorderColor,
-  secondaryButtonColor = "white",
-  primaryButtonCallback = () => {},
-  secondaryButtonCallback = () => {},
+  primaryButton,
+  secondaryButton,
   onClose = () => {},
   contentLabel,
   animationData,
+  eventName,
+  eventParams,
 }: Props): JSX.Element {
+  const [logged, SetLogged] = useState(false);
+
+  if (visible && eventName && !logged) {
+    newLogEvent("view", eventName, eventParams);
+    SetLogged(true);
+  }
+
+  function renderIcon() {
+    if (biggerIcon) return icon && <S.BiggerIcon src={icon} alt={altIcon} />;
+    if (roundIcon) return icon && <S.RoundIcon src={icon} alt={altIcon} />;
+
+    return icon && <S.Icon src={icon} />;
+  }
   return (
     <S.ModalWithIcon
       isOpen={visible}
@@ -64,6 +72,7 @@ function ModalRows({
       contentLabel={contentLabel}
       ariaHideApp={false}
     >
+      {renderIcon()}
       {animationData && (
         <S.Animation>
           <LottieAnimation
@@ -75,6 +84,7 @@ function ModalRows({
       )}
       <S.RowsModalContainer>
         <S.Title color={titleColor}>{title}</S.Title>
+        {body && <S.Body>{body}</S.Body>}
         <S.RowsModalSection>
           {rowsContent &&
             rowsContent.map((row: RowProps) => (
@@ -83,25 +93,32 @@ function ModalRows({
                 <S.RowsModalText>{row.text}</S.RowsModalText>
               </S.RowsModalRow>
             ))}
+          {children}
         </S.RowsModalSection>
-        {primaryButtonText && (
+        {primaryButton && (
           <Button
-            leftIcon={primaryButtonLeftIcon}
-            text={primaryButtonText}
-            textColor={primaryButtonTextColor}
-            backgroundColor={primaryButtonColor}
-            borderColor={primaryButtonBorderColor}
-            onClick={primaryButtonCallback}
+            leftIcon={primaryButton.leftIcon}
+            text={primaryButton.text}
+            textColor={primaryButton.textColor}
+            backgroundColor={primaryButton.color}
+            borderColor={primaryButton.borderColor}
+            onClick={primaryButton.onClick}
+            eventName={primaryButton.eventName}
+            eventParams={primaryButton.eventParams}
           />
         )}
-        {secondaryButtonText && (
+        {secondaryButton && (
           <Button
-            leftIcon={secondaryButtonLeftIcon}
-            text={secondaryButtonText}
-            textColor={secondaryButtonTextColor}
-            backgroundColor={secondaryButtonColor}
-            onClick={secondaryButtonCallback}
-            borderColor={secondaryButtonBorderColor}
+            leftIcon={secondaryButton.leftIcon}
+            text={secondaryButton.text}
+            textColor={secondaryButton.textColor || theme.colors.neutral[500]}
+            backgroundColor={
+              secondaryButton.backgroundColor || theme.colors.neutral10
+            }
+            onClick={secondaryButton.onClick}
+            borderColor={secondaryButton.borderColor}
+            eventName={secondaryButton.eventName}
+            eventParams={secondaryButton.eventParams}
           />
         )}
       </S.RowsModalContainer>

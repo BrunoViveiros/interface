@@ -1,31 +1,28 @@
-import styled, { css } from "styled-components";
-import Button from "components/atomics/Button";
+import styled from "styled-components";
+import Button from "components/atomics/buttons/Button";
+import { MainBodyContainer, MainContainer } from "layouts/MainLayout/styles";
 
-export const Container = styled.div`
-  width: 100%;
+export const Container = styled(MainContainer)``;
 
-  ${({ theme }) => css`
-    @media (min-width: ${theme.breakpoints.pad}) {
-      margin: 0 14%;
-    }
-  `}
-`;
+export const BodyContainer = styled(MainBodyContainer)``;
 
-export const BodyContainer = styled.div`
-  padding: 24px 16px 16px 16px;
-
-  ${({ theme }) => css`
-    @media (min-width: ${theme.breakpoints.pad}) {
-      padding: 0;
-    }
-  `}
+export const RightContainer = styled.div`
+  display: flex;
 `;
 
 export const WalletButton = styled(Button)`
-  ${() => css`
-    cursor: pointer;
-    height: 20px;
-    padding: 5px 12px;
-    font-size: 12px;
-  `}
+  padding: ${({ theme }) => theme.spacing(4, 12)};
+`;
+
+export const Treasure = styled.img`
+  padding: ${({ theme }) => theme.spacing(4)};
+`;
+
+export const TreasureButton = styled.button`
+  margin-left: 6%;
+  border: 1px solid ${({ theme }) => theme.colors.brand.primary[300]};
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  background-color: ${({ theme }) => theme.colors.neutral10};
 `;

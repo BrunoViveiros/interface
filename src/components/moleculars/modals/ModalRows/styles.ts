@@ -1,94 +1,70 @@
-import styled, { css } from "styled-components";
-import ReactModal from "react-modal";
-
-export const BlankModal = styled(ReactModal)`
-  background-color: #fff;
-  width: 100%;
-  border-radius: 16px;
-  margin: 16px;
-  max-width: 360px;
-`;
-
-export const Modal = styled(BlankModal)`
-  button,
-  a {
-    margin-bottom: 8px;
-
-    &:last-child {
-      margin: 0;
-    }
-  }
-`;
+import styled from "styled-components";
+import { defaultBodyXsMedium } from "styles/typography/default";
+import { stylizedDisplayXs } from "styles/typography/stylized";
+import { Modal } from "../ModalBlank/styles";
 
 export const ModalWithIcon = styled(Modal)`
-  padding: 16px;
-`;
-
-export const ModalWithImage = styled(Modal)`
-  overflow: hidden;
-`;
-
-export const Container = styled.div`
-  padding: 16px;
+  padding: ${({ theme }) => theme.spacing(16)};
 `;
 
 export const Icon = styled.img`
-  display: block;
-  width: 96px;
   height: 96px;
-  margin: -64px auto 8px auto;
+  margin: -64px auto 8px;
+  display: block;
 `;
 
-export const BiggerIcon = styled.img`
-  display: block;
-  margin: -64px auto 16px auto;
+export const BiggerIcon = styled(Icon)`
+  height: 100px;
+`;
+
+export const RoundIcon = styled(Icon)`
+  border-radius: 70px;
+  object-fit: cover;
 `;
 
 export const Animation = styled.div`
+  width: 50%;
+  height: 50%;
+  margin: -100px auto 5px;
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 50%;
-  height: 50%;
-  margin: -100px auto 5px auto;
-`;
-
-export const Image = styled.img`
-  width: 100%;
-  height: 152px;
 `;
 
 type TitleProps = {
   color?: string;
 };
 
-export const Title = styled.h2<TitleProps>`
-  ${({ theme, color }) => css`
-    text-align: center;
-    color: ${color || theme.colors.ribonBlack};
-  `}
+export const Title = styled.h3<TitleProps>`
+  ${stylizedDisplayXs}
+
+  margin-top: -16px;
+  text-align: center;
+  color: ${({ theme, color }) => color || theme.colors.neutral[800]};
 `;
 
 export const Body = styled.h3`
-  color: #82aabe;
+  ${defaultBodyXsMedium}
+
+  margin: ${({ theme }) => theme.spacing(8, 0, 14)};
   text-align: center;
-  margin: 8px 0px 20px;
+  color: ${({ theme }) => theme.colors.neutral[500]};
 `;
 
 export const RowsModalContainer = styled.div`
-  padding-top: 16px;
+  padding-top: ${({ theme }) => theme.spacing(16)};
 `;
 
 export const RowsModalSection = styled.div`
+  padding: ${({ theme }) => theme.spacing(0)};
   display: flex;
   flex-direction: column;
-  margin-top: 50px;
-  padding: 0;
+  align-items: center;
 `;
 
 export const RowsModalRow = styled.div`
+  margin-bottom: ${({ theme }) => theme.spacing(32)};
   display: flex;
-  margin-bottom: 28px;
 `;
 
 export const RowsModalIcon = styled.img`
@@ -98,5 +74,4 @@ export const RowsModalIcon = styled.img`
 export const RowsModalText = styled.h4`
   display: flex;
   align-items: center;
-  line-height: 23px;
 `;

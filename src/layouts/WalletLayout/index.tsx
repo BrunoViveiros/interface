@@ -5,7 +5,7 @@ import { useEffect } from "react";
 import { useWalletContext } from "contexts/walletContext";
 import { onAccountChange } from "lib/walletConnector";
 import WalletIcon from "assets/icons/wallet-icon.svg";
-import { logEvent } from "services/analytics";
+import { logEvent } from "lib/events";
 import { walletTruncate } from "lib/formatters/walletTruncate";
 import * as S from "./styles";
 
@@ -13,12 +13,14 @@ export type Props = {
   children: JSX.Element;
   hideNavigation?: boolean;
   hasBackButton?: boolean;
+  hideWallet?: boolean;
 };
 
 function WalletLayout({
   children,
   hideNavigation = false,
   hasBackButton = false,
+  hideWallet = false,
 }: Props): JSX.Element {
   const { t } = useTranslation("translation", {
     keyPrefix: "layouts.walletLayout",
@@ -36,7 +38,7 @@ function WalletLayout({
   }, []);
 
   const handleWalletButtonClick = () => {
-    logEvent("fundConWalletBtn_click", {
+    logEvent("treasureConWalletBtn_click", {
       from: "walletButton",
     });
     connectWallet();
@@ -53,18 +55,28 @@ function WalletLayout({
       {!hideNavigation && <Navigation />}
 
       <S.Container>
-        <LayoutHeader
-          hasBackButton={hasBackButton}
-          rightComponent={
-            <S.WalletButton
-              text={walletButtonText()}
-              onClick={handleWalletButtonClick}
-              outline
-              round
-              rightIcon={WalletIcon}
-            />
-          }
-        />
+        {!hideWallet && (
+          <LayoutHeader
+            hasBackButton={hasBackButton}
+            rightComponent={
+              <S.RightContainer>
+                <S.WalletButton
+                  text={walletButtonText()}
+                  onClick={handleWalletButtonClick}
+                  outline
+                  round
+                  rightIcon={WalletIcon}
+                  size="small"
+                />
+              </S.RightContainer>
+            }
+            hideWallet
+          />
+        )}
+        {hideWallet && (
+          <LayoutHeader hasBackButton={hasBackButton} hideWallet />
+        )}
+
         <S.BodyContainer>{children}</S.BodyContainer>
       </S.Container>
     </>

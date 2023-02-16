@@ -2,6 +2,8 @@ import ModalForm from "components/moleculars/modals/ModalForm";
 import { useState } from "react";
 import { isValidEmail } from "lib/validators";
 import { useTranslation } from "react-i18next";
+import { ButtonProps } from "components/atomics/buttons/Button";
+import { newLogEvent } from "lib/events";
 import * as S from "../styles";
 
 type Props = {
@@ -9,20 +11,19 @@ type Props = {
   visible: boolean;
   title: string;
   icon: string;
-  primaryButtonText: string;
-  secondaryButtonText: string;
-  secondaryButtonCallback: () => void;
+  primaryButton: ButtonProps;
+  secondaryButton: ButtonProps;
 };
 function ConfirmEmail({
   onFormSubmit,
   visible,
   title,
   icon,
-  primaryButtonText,
-  secondaryButtonText,
-  secondaryButtonCallback,
+  primaryButton,
+  secondaryButton,
 }: Props): JSX.Element {
   const [primaryButtonDisabled, setPrimaryButtonDisabled] = useState(true);
+  const [logged, setLogged] = useState(false);
   const { t } = useTranslation("translation", {
     keyPrefix: "donations.causesPage.modalForm",
   });
@@ -45,10 +46,6 @@ function ConfirmEmail({
       <div>
         <S.FooterText>
           {t("footerStartText")}{" "}
-          <a href={t("useTermsLink")} target="_blank" rel="noreferrer">
-            {t("useTermsText")}
-          </a>{" "}
-          {t("footerAnd")}{" "}
           <a href={t("privacyPolicyLink")} target="_blank" rel="noreferrer">
             {t("privacyPolicyText")}
           </a>
@@ -65,14 +62,27 @@ function ConfirmEmail({
       visible={visible}
       footer={footer()}
       icon={icon}
-      primaryButtonText={primaryButtonText}
-      secondaryButtonText={secondaryButtonText}
-      secondaryButtonCallback={secondaryButtonCallback}
-      primaryButtonDisabled={primaryButtonDisabled}
+      primaryButton={{
+        text: primaryButton.text,
+        onClick: primaryButton.onClick,
+        disabled: primaryButtonDisabled,
+        eventName: "P1_loginConfirmBtn",
+      }}
+      secondaryButton={{
+        text: secondaryButton.text,
+        onClick: secondaryButton.onClick,
+      }}
       onValuesChange={(values) => {
+        if (values.email) {
+          if (!logged) {
+            newLogEvent("fill", "P1_loginForm");
+            setLogged(true);
+          }
+        }
         setPrimaryButtonDisabled(!isValidEmail(values.email));
       }}
       title={title}
+      eventName="P1_loginModal"
     />
   );
 }

@@ -1,10 +1,12 @@
+import Cause from "./Cause";
+import { NonProfitImpact } from "./NonProfitImpact";
+import Story from "./Story";
+
 export default interface NonProfit {
-  id: number;
+  id: any;
   name: string;
   walletAddress: string;
   impactDescription: string;
-  description: string;
-  link: string;
   backgroundImage: string;
   coverImage: string;
   mainImage: string;
@@ -12,4 +14,7 @@ export default interface NonProfit {
   impactByTicket: number;
   createdAt?: string;
   updatedAt?: string;
+  cause: Cause;
+  nonProfitImpacts?: NonProfitImpact[];
+  stories?: Story[];
 }

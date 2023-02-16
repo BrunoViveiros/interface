@@ -1,27 +1,24 @@
-import styled, { css } from "styled-components";
+import styled from "styled-components";
 
-export const Container = styled.div`
-  width: 100%;
-
-  ${({ theme }) => css`
-    @media (min-width: ${theme.breakpoints.pad}) {
-      margin: 0 14%;
-    }
-  `}
+export const MainContainer = styled.div`
+  @media (min-width: ${({ theme }) => theme.breakpoints.pad}) {
+    max-width: 100%;
+    margin: 0 14%;
+    margin-left: calc(14% + 80px);
+    display: flex;
+    flex-direction: column;
+  }
 `;
 
-export const BodyContainer = styled.div`
-  padding: 24px 16px 16px 16px;
+export const MainBodyContainer = styled.div`
+  margin-bottom: ${({ theme }) => theme.spacing(64)};
+  padding: ${({ theme }) => theme.spacing(24, 16, 16)};
 
-  ${({ theme }) => css`
-    @media (min-width: ${theme.breakpoints.pad}) {
-      padding: 0;
-    }
-  `}
+  @media (min-width: ${({ theme }) => theme.breakpoints.pad}) {
+    padding: ${({ theme }) => theme.spacing(0)};
+  }
 `;
 
 export const Settings = styled.img`
-  ${() => css`
-    cursor: pointer;
-  `}
+  cursor: pointer;
 `;

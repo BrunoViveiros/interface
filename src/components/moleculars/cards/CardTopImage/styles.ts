@@ -1,34 +1,89 @@
 import styled, { css } from "styled-components";
+import {
+  defaultBodySmRegular,
+  defaultHeadingXs,
+  defaultBodyLgBold,
+} from "styles/typography/default";
 
-export const Container = styled.div`
-  ${({ theme }) => css`
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    width: 160px;
-    padding: 16px;
-    background-color: ${theme.colors.ribonWhite};
-    box-shadow: 0px 4px 12px rgba(24, 86, 105, 0.15);
-    border-radius: 16px;
-    margin-bottom: 16px;
-  `}
+export const Container = styled.div<{
+  textColor?: string;
+  titleColor?: string;
+  size?: string;
+}>`
+  ${(props) =>
+    props.size === "small" &&
+    css`
+      width: 48%;
+    `}
+
+  ${(props) =>
+    props.size === "large" &&
+    css`
+      width: 100%;
+      min-width: 230px;
+    `}
+
+  margin-bottom: ${({ theme }) => theme.spacing(8)};
+  padding: ${({ theme }) => theme.spacing(16)};
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+  background-color: ${({ theme }) => theme.colors.neutral10};
+  box-shadow: 0 4px 12px ${({ theme }) => theme.colors.defaultShadow};
+
+  @media (min-width: ${({ theme }) => theme.breakpoints.pad}) {
+    width: 230px;
+  }
 `;
 
-export const Image = styled.img`
+export const Image = styled.img<{
+  size?: string;
+}>`
+  ${(props) =>
+    props.size === "small" &&
+    css`
+      width: 24px;
+      height: 24px;
+    `}
+
+  ${(props) =>
+    props.size === "large" &&
+    css`
+      width: 72px;
+      height: 72px;
+      border-radius: 50%;
+    `}
+
   display: block;
-  height: 56px;
-  width: 56px;
-  margin-right: 16px;
   object-fit: cover;
-  border-radius: 50%;
 `;
 
 export const Text = styled.p`
-  ${({ theme }) => css`
-    margin-top: 16px;
-    font-size: 14px;
-    color: ${theme.colors.ribonBlack};
-    font-weight: ${theme.font.normal};
-    text-align: center;
-  `}
+  ${defaultBodySmRegular}
+
+  margin-top: ${({ theme }) => theme.spacing(8)};
+  color: ${({ theme }) => theme.colors.neutral[500]};
+`;
+
+export const Title = styled.span<{
+  size?: string;
+}>`
+  ${(props) =>
+    props.size === "small" &&
+    css`
+      ${defaultBodyLgBold}
+
+      @media (min-width: ${({ theme }) => theme.breakpoints.pad}) {
+        ${defaultHeadingXs}
+      }
+    `}
+
+  ${(props) =>
+    props.size === "large" &&
+    css`
+      ${defaultBodySmRegular}
+    `}
+
+  margin-top: ${({ theme }) => theme.spacing(8)};
+  color: ${({ theme }) => theme.colors.brand.primary[800]};
 `;

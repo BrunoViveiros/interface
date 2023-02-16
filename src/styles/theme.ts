@@ -1,3 +1,7 @@
+import brandColors from "styles/colors/brand";
+import feedbackColors from "./colors/feedback";
+import neutralColors from "./colors/neutral";
+
 export interface Breakpoint {
   mobile: string;
   mobileMedium: string;
@@ -10,35 +14,62 @@ interface ThemeType {
   [key: string]: any;
 }
 
+const getSpacing = (space: number): string => {
+  const spacings = [0, 4, 8, 12, 16, 20, 24, 32, 40, 48, 64, 80, 112];
+
+  if (!spacings.includes(space)) {
+    return "0px";
+  }
+  return `${space}px`;
+};
+
 const theme: ThemeType = {
   grid: {},
   border: {},
   font: {
-    family: "Lato",
     light: 300,
     normal: 400,
-    bold: 600,
+    medium: 500,
+    semibold: 600,
+    bold: 700,
     sizes: {},
   },
   colors: {
-    ribonBlue: "#00CDB4",
-    ribonBlack: "#185669",
-    darkGray: "#82AABE",
-    lightGray: "#D9E5EB",
-    gray: "#C4C4C4",
-    bgGray: "#FBFBFD",
-    lgRed: "#EF5350",
-    eaBlue: "#00B5BF",
-    phcYellow: "#FFB300",
-    sciGreen: "#6DC100",
-    ribonWhite: "#FBFBFD",
-    phcYellow2: "#FF8F00",
-    ribonTransparent: "rgba(255, 255, 255, 0)",
-    ribonShadow: "rgba(24, 86, 105, 0.15)",
-    modalBackground: "rgba(24, 86, 105, 0.6)",
-    hoverGray: "rgba(238, 244, 246, 1)",
+    neutral10: "#FFFFFF",
+    defaultShadow: "rgba(40, 36, 28, 0.15)",
+    defaultShadow10: "rgba(40, 36, 28, 0.1)",
+    defaultShadow05: "rgba(40, 36, 28, 0.05)",
+    backgroundOverlay: "rgba(40, 36, 28, 0.60)",
+    brand: brandColors,
+    neutral: neutralColors,
+    feedback: feedbackColors,
   },
-  spacings: {},
+  filters: {
+    filterOrange40:
+      "invert(58%) sepia(6%) saturate(5888%) hue-rotate(326deg) brightness(69%) contrast(100%)",
+  },
+  zindex: {
+    base: 0,
+    above: 1,
+    below: -1,
+    dropdown: 2,
+    navigator: 3,
+    navbar: 4,
+    modal: 5,
+    toast: 6,
+    loading: 7,
+
+    stories: {
+      base: 999,
+    },
+  },
+  spacing: (top: number, right?: number, bottom?: number, left?: number) =>
+    `${
+      getSpacing(top) +
+      (typeof right === "number" ? ` ${getSpacing(right)}` : "") +
+      (typeof bottom === "number" ? ` ${getSpacing(bottom)}` : "") +
+      (typeof left === "number" ? ` ${getSpacing(left)}` : "")
+    }`,
   breakpoints: {
     mobile: "0px",
     mobileMedium: "374px",

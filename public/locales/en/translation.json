@@ -2,47 +2,85 @@
   "donations": {
     "causesPage": {
       "donationModalTitle": "You got a donation ticket",
-      "donationModalBody": "Use your free ticket to make a donation",
-      "donationModalButtonText": "Continue",
-      "confirmModalTitle": "Log in or sign up to use your donation ticket",
+      "donationModalButtonText": "Receive ticket",
+      "donationWithRibonModalTitle": "Donate together to change lives!",
+      "donationWithIntegrationModalTitle": "{{integrationName}} brought you here",
+      "donationWithIntegrationModalSubtitle": "You have a ticket available",
+      "donationWithIntegrationModalButtonText": "Receive ticket",
+      "confirmModalTitle": "Enter your e-mail to use your donation ticket",
       "confirmModalAuthTitle": "Confirm your donation",
       "confirmModalPrimaryButtonText": "Confirm",
       "confirmModalSecondaryButtonText": "Cancel",
-      "donateText": "Use ticket",
-      "donateBlockedText": "Blocked",
-      "pageTitle": "Causes",
+      "donateText": "Donate ticket",
+      "donateBlockedText": "No tickets",
+      "impactPrefix": "Donate",
+      "pageTitle": "Donate to a project",
       "errorModalTitle": "Processing failed",
       "errorModalText": "The network is unstable and it was not possible to process your donation. Try again shortly.",
       "errorModalButtonText": "Ok",
-      "blockedModalTitle": "You don't have donation tickets",
-      "blockedModalText": "Make a giving to Ribon's Donation Treasure to promote new donations",
-      "blockedModalFirstButtonText": "Give now",
-      "blockedModalSecondButtonText": "Maybe later",
+      "receiveTicketAnimationModalTitle": "Receiving Ticket...",
+      "receiveTicketAnimationModalOrigin": "Community",
+      "receiveTicketAnimationModalDestiny": "You",
+      "donateAnimationModalTitle": "Making donation...",
+      "donateAnimationModalOrigin": "You",
+      "donateAnimationModalDestiny": "Project",
+      "chooseCauseModalTitle": "Choose a cause",
+      "allCauses": "All",
+      "learnMore": "Learn more",
+      "tooltipTicketText": "Tickets are used to make donations and you get a new one everyday when you log in Ribon.",
+      "tooltipTicket": "What is a ticket?",
+      "stories": {
+        "loading": "Loading stories...",
+        "empty": "No stories available."
+      },
       "modalForm": {
-        "footerStartText": "By signing up you agree to Ribon’s",
+        "footerStartText": "By signing up you agree to Ribon's",
         "footerAnd": "and",
         "useTermsText": "Terms of Service",
         "privacyPolicyText": "Privacy Policy",
-        "privacyPolicyLink": "https://blog.ribon.io/2021/09/16/privacy-and-retention-of-personal-data-policy/",
-        "useTermsLink": "https://blog.ribon.io/2021/07/12/termos-e-condicoes-de-uso-da-ribon/"
+        "privacyPolicyLink": "https://ribon.io/2022/06/10/privacy-and-personal-data-retention-policy/",
+        "useTermsLink": "https://blog.ribon.io/2021/07/12/termos-e-condicoes-de-uso-da-ribon/",
+        "accessUserSupport": "Access user support"
+      },
+      "blockedModal": {
+        "title": "You have no more tickets :(",
+        "text": "Would you like to receive more?",
+        "ribonTitle": "Ribon gift",
+        "ribonText": "Come back tomorrow to receive 1 more ticket"
       }
     },
+    "storiesPage": {
+      "ctaText": "Donate ticket"
+    },
+    "postDonationPage": {
+      "title": "If you wish, you can do more",
+      "donateAsCommunity": "Donate as a community to",
+      "donateDirectly": "Donate directly to",
+      "donateLater": "Donate later",
+      "boostedDonation": "Boosted donation"
+    },
     "donationDonePage": {
-      "title": "Thank you for your donation!",
-      "subtitle": "1 day of pet food for rescued animals",
+      "title": "Thank you for the donation!",
       "button": "Check impact",
       "ngoTitle": "About ",
-      "ngoInformation": "Amor em Patas is an organization that aims to rescue abandoned animals, take care of them and seek adoption.",
-      "moreInfoButtonText": "More info"
+      "moreInfoButtonText": "More info",
+      "youDonatedText": "You donated",
+      "confirmButtonText": "Ok",
+      "donationSuccessfullTitle": "Giving successful",
+      "donationSuccessfullSubtitle": "It will be used to pay for various donations made in the app."
     },
-    "donationInProcess": {
-      "animationText": "Donating...",
-      "impactText": "This donation is funded by Ribon’s Donation Treasure"
+    "donationDoneCausePage": {
+      "title": "Congratulations!",
+      "titleSecondLine": "You have donated to",
+      "youDonatedText": "You donated",
+      "button": "Finish"
     },
     "menu": {
       "impactPageTitle": "Impact",
-      "causesPageTitle": "Causes",
-      "treasurePageTitle": "Treasure"
+      "causesPageTitle": "Tickets",
+      "givingPageTitle": "Giving",
+      "communityMenuItem": "Community",
+      "directDonationMenuItem": "Direct donation"
     }
   },
   "layouts": {
@@ -50,6 +88,15 @@
       "changeLanguageItem": {
         "changeLanguageText": "Change language"
       },
+      "userSupportItem": {
+        "userSupportText": "User Support"
+      },
+      "getTheAppItem": {
+        "getTheAppText": "Get the app"
+      },
+      "donationModalTitle": "Great! You got 1 ticket to donate",
+      "donationModalBody": "You can assign the ticket to any project",
+      "donationModalButtonText": "Let’s go!",
       "logoutItem": {
         "logoutButton": "Sign Out",
         "logoutModalTitle": "Do you really want to sign out?",
@@ -70,10 +117,41 @@
     "impactText": "You donated ",
     "button": "Show more",
     "noImpactText": "Your donation impact summary will be shown here",
-    "noImpactButton": "Donate now"
+    "noImpactButton": "Donate now",
+    "donatedTickets": "Donated tickets",
+    "donatedMoney": "Donated money",
+    "supportedNgos": "Supported NGOs",
+    "supporterCauses": "Supporter causes",
+    "impactMenu": {
+      "ticketDonations": "Ticket donations",
+      "communityDonations": "Community donations",
+      "directDonations": "Direct donations"
+    },
+    "ticketSection": {
+      "emptyTitle": "Your ticket donations will appear here.",
+      "emptyText": "You have not made free donations using tickets yet, why not try your first one?",
+      "emptyButton": "Donate using tickets",
+      "showMore": "Show more"
+    },
+    "directSection": {
+      "emptyTitle": "Your direct donations will appear here.",
+      "emptyText": "You have not made direct donations yet, why not try your first one?",
+      "emptyButton": "Donate directly",
+      "tooltipFirstParagraphText": "Net donation: {{value}}",
+      "tooltipSecondParagraphText": "Service fees: {{value}}",
+      "showMore": "Show more"
+    },
+    "communitySection": {
+      "emptyTitle": "Your community donations will appear here.",
+      "emptyText": "You have not made community donations yet, why not try your first one?",
+      "emptyButton": "Donate in community",
+      "tooltipFirstParagraphText": "Net donation: {{value}}",
+      "tooltipSecondParagraphText": "Service fees: {{value}}",
+      "showMore": "Show more"
+    }
   },
   "promoters": {
-    "fundPage": {
+    "treasurePage": {
       "title": "Donation treasure",
       "treasureBalance": "Treasure balance",
       "treasureSupportButtonText": "Support the treasure",
@@ -82,11 +160,14 @@
         "textLastCard": "Show your givings",
         "firstGivingButtonText": "Give now",
         "firstGivingText": "Make a giving and you’ll see it here",
-        "subtitleGivings": "Your givings",
+        "subtitleYourGivings": "Your givings",
+        "subtitleAllGivings": "All givings",
         "processingText": "Processing transaction...",
         "transactionSuccessText": "Transaction successful",
         "transactionFailedText": "Transaction failed",
-        "linkMessageToast": "Learn more"
+        "linkMessageToast": "Learn more",
+        "cardDonationText": "Given by card",
+        "refunded": "Refunded"
       },
       "modalOnboarding": {
         "title": "Ribon’s Donation Treasure",
@@ -94,9 +175,30 @@
         "button": "Ok"
       }
     },
-    "supportFundPage": {
-      "title": "Your giving",
-      "subtitle": "How much do you want to give?",
+    "supportCausePage": {
+      "title": "Donate with a community",
+      "communityAddText": "The Community will add",
+      "communityAddButtonText": "How the community does it?",
+      "donateButtonText": "Donate {{value}}",
+      "selectOfferSection": {
+        "causeText": "You'll donate to"
+      },
+      "connectWalletButtonText": "Connect wallet",
+      "userBalanceText": "Your balance: ",
+      "refundText": "*Cryptocurrency payments are non-refundable"
+    },
+    "supportNonProfitPage": {
+      "title": "Make a direct donation",
+      "donateButtonText": "Donate {{value}}",
+      "selectOfferSection": {
+        "fundText": "fund"
+      },
+      "tooltipImpact": "How we calculate the impact?",
+      "tooltipImpactText": "The calculations are based on the minimum value needed for the project achieve good results. Ribon’s causes are part of the social moviment “Effective Altruism”, which aim to generate big impact at low cost."
+    },
+    "supportTreasurePage": {
+      "title": "Make a bigger impact",
+      "subtitle": "How much do you want to give?*",
       "buttonText": "Confirm giving",
       "disabledButtonText": "Enter a USDC amount",
       "insufficientBalanceText": "Insufficient USDC balance",
@@ -115,27 +217,107 @@
       "cardSection": {
         "currency": "Currency",
         "subtitleCard": "Choose your giving",
-        "buttonTextCard": "Next",
+        "simulateSectionTitle": "Simulate a possible result",
+        "buttonTextCard": "Proceed to Checkout",
+        "buttonSubmit": "Confirm",
+        "extraText": "*Contributions in crypto are not refundable.",
         "detailsSubtitle": "Giving details",
         "netGivingText": "Net giving: {{netGiving}}*",
         "serviceFeesText": "Service fees: {{serviceFees}}",
         "cryptoValueText": "*This giving will be converted in cryptocurrency ({{cryptoGivings}})",
-        "billingInformationSection": {
-          "title": "Billing information",
-          "country": "Country",
-          "state": "State",
-          "city": "City",
-          "taxId": "Tax ID"
+        "billingInformationPage": {
+          "title": "Your Giving",
+          "buttonTextCard": "Continue",
+          "billingInformationSection": {
+            "title": "Billing Information",
+            "country": "Country",
+            "state": "State",
+            "city": "City",
+            "taxId": "Tax ID",
+            "brazilName": "Brazil"
+          }
+        },
+        "paymentInformationPage": {
+          "title": "Your Giving",
+          "buttonTextCard": "Continue",
+          "paymentInformationSection": {
+            "title": "Payment method",
+            "email": "E-mail",
+            "cardNumber": "Card number",
+            "cardName": "Name on card",
+            "cardDueDate": "Expiration",
+            "cvv": "Card verification code"
+          }
+        },
+        "impactSimulationSection": {
+          "label": "Select a NGO",
+          "payUpToText": "can pay up to"
+        },
+        "simulateInfoModal": {
+          "title": "This is a possible result",
+          "body": "This contribution will finance tickets to more people to donate to different causes.",
+          "primaryButtonText": "Ok"
+        },
+        "userSupportCard": {
+          "title": "Ribon Support",
+          "description": "Questions, ideas, refunds about donations!",
+          "primaryButtonText": "Access user support"
         }
       },
       "linkMessageToast": "Learn more"
+    },
+    "supportWithCommunityPage": {
+      "communityAddPage": {
+        "title": "How does the community increase your {{value}} donation?",
+        "button": "Donate {{value}}"
+      },
+      "paymentPage": {
+        "title": "Your donation to",
+        "button": "Continue",
+        "netDonationText": "Net donation:",
+        "serviceFeesText": "Service fees:"
+      }
     }
   },
   "contexts": {
     "walletContext": {
       "ethereumNotFoundMessage": "Install Metamask to continue",
       "userRejectedConnectionMessage": "Wallet connection rejected",
-      "onErrorMessage": "Wallet connection failed"
+      "onErrorMessage": "Wallet connection failed",
+      "invalidNetworkMessage": "Connect to a valid network"
+    },
+    "cardPaymentInformation": {
+      "onErrorMessage": "Payment failed. Try again.",
+      "loadingMessage": "Payment in progress...",
+      "modalSuccessTitle": "You've added {{value}} USDC to the treasury!",
+      "modalSuccessDescription": "Your donation has been converted into cryptocurrencies to fund more tickets.",
+      "modalSuccessButton": "Ok",
+      "modalAnimationFrom": "You",
+      "modalAnimationTo": "Ribon",
+      "modalAnimationTitle": "Processing giving..."
+    }
+  },
+  "impactNormalizer": {
+    "year": "year",
+    "years": "years",
+    "month": "month",
+    "months": "months",
+    "day": "day",
+    "days": "days",
+    "for": "for",
+    "and": "and",
+    "of": "of"
+  },
+  "appInDevelopmentPage": {
+    "title": "App in development",
+    "description": "Don't worry, we’ll remember you to download it when its released",
+    "surveyDescription": "Take this survey and help us build the app",
+    "surveyButton": "Take survey",
+    "surveyLink": "https://docs.google.com/forms/d/e/1FAIpQLSc6Z7YQh56lIxD3uh1kX8TwlbkF6c9Q4nkQ1SXdblOljzFs-w/viewform?usp=sf_link"
+  },
+  "downloadApp": {
+    "floating": {
+      "title": "Get app"
     }
   }
 }
