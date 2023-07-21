@@ -1,8 +1,12 @@
 import { useTranslation } from "react-i18next";
 import { useLocation } from "react-router-dom";
 import { logEvent } from "lib/events";
+import { useTasksContext } from "contexts/tasksContext";
+import useContributionActivity from "hooks/useContributionActivity";
 import CausesIconOn from "./assets/causesIconOn.svg";
 import CausesIconOff from "./assets/causesIconOff.svg";
+import ForYouIconOn from "./assets/forYouIconOn.svg";
+import ForYouIconOff from "./assets/forYouIconOff.svg";
 import ImpactIconOn from "./assets/impactIconOn.svg";
 import ImpactIconOff from "./assets/impactIconOff.svg";
 import GivingIconOn from "./assets/givingIconOn.svg";
@@ -19,6 +23,8 @@ function Navigation(): JSX.Element {
   });
   const location = useLocation();
   const { search } = location;
+  const { hasCompletedATask } = useTasksContext();
+  const { newContributionActivity } = useContributionActivity();
 
   function isInPath(route: any): boolean {
     const { menuOptions, path } = route;
@@ -34,28 +40,39 @@ function Navigation(): JSX.Element {
 
   const routes = [
     {
-      path: "/",
+      path: "/causes",
       iconOn: CausesIconOn,
       iconOff: CausesIconOff,
       title: t("causesPageTitle"),
       event: "homeNavBtn_click",
     },
     {
+      path: "/forYou",
+      iconOn: ForYouIconOn,
+      iconOff: ForYouIconOff,
+      title: t("forYouPageTitle"),
+      event: "forYouNavBtn_click",
+      showActivityIndicatorCircle: hasCompletedATask,
+    },
+    {
       path: "/promoters/support-cause",
       iconOn: GivingIconOn,
       iconOff: GivingIconOff,
       title: t("givingPageTitle"),
-      event: "givingNavBtn_click",
+      event: "giveCauseCard_click",
+      params: { from: "header" },
       menuOptions: [
         {
           path: "/promoters/support-cause",
           title: t("communityMenuItem"),
-          event: "communityMenuBtn_click",
+          event: "giveCauseCard_click",
+          params: { from: "subheader" },
         },
         {
           path: "/promoters/support-non-profit",
           title: t("directDonationMenuItem"),
-          event: "directDonationMenuBtn_click",
+          event: "giveNonProfitCard_click",
+          params: { from: "subheader" },
         },
       ],
     },
@@ -65,11 +82,12 @@ function Navigation(): JSX.Element {
       iconOff: ImpactIconOff,
       title: t("impactPageTitle"),
       event: "impactNavBtn_click",
+      showActivityIndicatorCircle: newContributionActivity,
     },
   ];
 
-  const handleEvent = (event: string) => {
-    logEvent(event);
+  const handleEvent = (event: string, params = {}) => {
+    logEvent(event, params);
   };
 
   return (
@@ -77,14 +95,15 @@ function Navigation(): JSX.Element {
       {routes.map((route) => (
         <NavigationLink
           key={route.path}
-          onClick={() => handleEvent(route.event)}
+          onClick={() => handleEvent(route.event, route.params)}
           to={{ pathname: route.path, search }}
           icon={isInPath(route) ? route.iconOn : route.iconOff}
           title={route.title}
           enabled={isInPath(route)}
+          showActivityIndicatorCircle={route.showActivityIndicatorCircle}
           menuOptions={route?.menuOptions?.map((option) => ({
             ...option,
-            onClick: () => handleEvent(option.event),
+            onClick: () => handleEvent(option.event, option.params),
             search,
           }))}
         />

@@ -2,7 +2,7 @@ import { useTranslation } from "react-i18next";
 import { useEffect } from "react";
 import { logEvent } from "lib/events";
 import { useCauses } from "@ribon.io/shared/hooks";
-import Cause from "types/entities/Cause";
+import { Cause } from "@ribon.io/shared/types";
 import IntersectBackground from "assets/images/intersect-background.svg";
 import useNavigation from "hooks/useNavigation";
 import { useLocation } from "react-router-dom";
@@ -12,9 +12,9 @@ import { useCryptoPayment } from "contexts/cryptoPaymentContext";
 import GroupButtons from "components/moleculars/sections/GroupButtons";
 import theme from "styles/theme";
 import Intersection from "assets/images/intersection-image.svg";
+import UserSupportBanner from "components/moleculars/banners/UserSupportBanner";
 import SupportImage from "../assets/support-image.png";
 import * as S from "../styles";
-import UserSupportSection from "../../SupportTreasurePage/CardSection/UserSupportSection";
 import SelectCryptoOfferSection from "./SelectCryptoOfferSection";
 
 type LocationStateType = {
@@ -54,11 +54,13 @@ function CryptoPage(): JSX.Element {
   };
 
   useEffect(() => {
-    setCause(state?.causeDonated || causesFilter()[0]);
+    if (!cause) {
+      setCause(state?.causeDonated || causesFilter()[0]);
+    }
   }, [causes]);
 
   useEffect(() => {
-    if (cause && cause.pools.length > 0) {
+    if (cause && cause.pools?.length > 0) {
       setCurrentPool(cause?.pools[cause.pools.length - 1].address);
     }
   }, [cause]);
@@ -96,7 +98,12 @@ function CryptoPage(): JSX.Element {
     }
 
     connectWallet();
-    logEvent("treasureComCicleBtn_click");
+    logEvent("giveCauseBtn_start", {
+      from: "giveCauseCrypto_page",
+      causeId: cause?.id,
+      amount,
+      currency: tokenSymbol,
+    });
   };
 
   const handleCommunityAddClick = () => {
@@ -123,10 +130,11 @@ function CryptoPage(): JSX.Element {
     return t("connectWalletButtonText");
   };
 
-  const preSelectedIndex = () =>
-    state?.causeDonated
-      ? causesFilter().findIndex((c) => c.id === state?.causeDonated?.id)
-      : 0;
+  const preSelectedIndex = () => {
+    if (state?.causeDonated)
+      return causesFilter().findIndex((c) => c.id === state?.causeDonated?.id);
+    return cause ? causesFilter().findIndex((c) => c.id === cause?.id) : 0;
+  };
 
   return (
     <S.Container>
@@ -177,7 +185,7 @@ function CryptoPage(): JSX.Element {
           />
           <S.RefundText>{t("refundText")}</S.RefundText>
         </S.DonateContainer>
-        <UserSupportSection />
+        <UserSupportBanner from="giveCauseCrypto_page" />
       </S.ContentContainer>
 
       <S.BackgroundImage src={IntersectBackground} />

@@ -4,9 +4,13 @@ import * as S from "./styles";
 export type Props = {
   name: string;
   suggestions: any[];
-  placeholder: string;
+  placeholder?: string;
   onOptionChanged?: (value: any) => void;
   required?: boolean;
+  borderColor?: Record<string, any>;
+  textColor?: string;
+  mask?: string;
+  label?: Record<string, any>;
 };
 
 function InputAutoComplete({
@@ -15,6 +19,11 @@ function InputAutoComplete({
   placeholder,
   onOptionChanged,
   required,
+  borderColor,
+  textColor,
+  mask,
+  label,
+  ...props
 }: Props): JSX.Element {
   const [filteredSuggestions, setFilteredSuggestions] = useState(suggestions);
   const [showSuggestions, setShowSuggestions] = useState(false);
@@ -24,7 +33,7 @@ function InputAutoComplete({
 
   const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const userInput = e.target.value;
-    const relatedSuggestions = suggestions
+    const relatedSuggestions = suggestions.length
       ? suggestions.filter((suggestion) =>
           suggestion.toLowerCase().includes(userInput.toLowerCase()),
         )
@@ -49,8 +58,23 @@ function InputAutoComplete({
 
   return (
     <>
+      {label && (
+        <S.LabelContainer>
+          {label.icon && label.icon.class === "left" && (
+            <S.LabelIcon name={label.icon.name} className={label.icon.class} />
+          )}
+          <S.Label>
+            {required && <span>*</span>}
+            {label.text}
+          </S.Label>
+          {label.icon && label.icon.class === "right" && (
+            <S.LabelIcon className={label.icon.class} name={label.icon.name} />
+          )}
+        </S.LabelContainer>
+      )}
       <S.InputAutoComplete
         id={name}
+        mask={mask ?? ""}
         onChange={onChange}
         onClick={onClick}
         value={input}
@@ -58,7 +82,10 @@ function InputAutoComplete({
         aria-label={placeholder}
         name={name}
         required={required}
-        autoComplete="off"
+        autoComplete="nope"
+        textColor={textColor}
+        borderColor={borderColor}
+        {...props}
       />
       {showSuggestions && input && (
         <S.Container>

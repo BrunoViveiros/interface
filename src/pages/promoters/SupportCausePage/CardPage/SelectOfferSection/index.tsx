@@ -2,10 +2,8 @@ import { useEffect, useState } from "react";
 import InputRange from "components/atomics/inputs/InputRange";
 import { useOffers } from "@ribon.io/shared/hooks";
 import { useCardPaymentInformation } from "contexts/cardPaymentInformationContext";
-import Offer from "types/entities/Offer";
+import { Offer, Cause, Currencies } from "@ribon.io/shared/types";
 import { useTranslation } from "react-i18next";
-import Cause from "types/entities/Cause";
-import { Currencies } from "@ribon.io/shared/types";
 import theme from "styles/theme";
 import { formatPrice } from "lib/formatters/currencyFormatter";
 import { getLocalStorageItem, setLocalStorageItem } from "lib/localStorage";
@@ -16,7 +14,7 @@ const { secondary } = theme.colors.brand;
 
 type Props = {
   cause: Cause | undefined;
-  onOfferChange: (offer: Offer) => void;
+  onOfferChange: (offer: Offer, index?: number) => void;
 };
 
 const CURRENT_OFFER_INDEX_KEY = "CURRENT_OFFER_INDEX_KEY";
@@ -52,7 +50,7 @@ function SelectOfferPage({ cause, onOfferChange }: Props): JSX.Element {
   }, [offers]);
 
   useEffect(() => {
-    if (currentOffer) onOfferChange(currentOffer);
+    if (currentOffer) onOfferChange(currentOffer, currentOfferIndex);
   }, [currentOffer]);
 
   useEffect(() => {

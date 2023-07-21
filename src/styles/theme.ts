@@ -39,10 +39,16 @@ const theme: ThemeType = {
     defaultShadow: "rgba(40, 36, 28, 0.15)",
     defaultShadow10: "rgba(40, 36, 28, 0.1)",
     defaultShadow05: "rgba(40, 36, 28, 0.05)",
-    backgroundOverlay: "rgba(40, 36, 28, 0.60)",
+    backgroundOverlay: "rgba(34, 30, 22, 0.6)",
     brand: brandColors,
     neutral: neutralColors,
     feedback: feedbackColors,
+  },
+  icons: {
+    lg: "48px",
+    md: "40px",
+    sm: "24px",
+    xs: "20px",
   },
   filters: {
     filterOrange40:

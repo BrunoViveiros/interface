@@ -1,12 +1,10 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { NonProfit } from "@ribon.io/shared/types";
 import {
-  useNonProfits,
-  useSources,
-  useUsers,
+  useFreeDonationNonProfits,
   useIntegration,
   useCanDonate,
+  useFirstAccessToIntegration,
 } from "@ribon.io/shared/hooks";
 import { useLocation } from "react-router-dom";
 import { useCurrentUser } from "contexts/currentUserContext";
@@ -15,32 +13,30 @@ import { isFirstAccess } from "lib/onboardingFirstAccess";
 import { useModal } from "hooks/modalHooks/useModal";
 import { MODAL_TYPES } from "contexts/modalContext/helpers";
 import { getLocalStorageItem, setLocalStorageItem } from "lib/localStorage";
-import { DONATION_MODAL_SEEN_AT_KEY } from "lib/localStorage/constants";
+import { DONATION_TOAST_SEEN_AT_KEY } from "lib/localStorage/constants";
 import { today } from "lib/dateTodayFormatter";
-import { useDonationTicketModal } from "hooks/modalHooks/useDonationTicketModal";
 import Spinner from "components/atomics/Spinner";
-import { logError } from "services/crashReport";
 import GroupButtons from "components/moleculars/sections/GroupButtons";
 import useVoucher from "hooks/useVoucher";
 import { useCausesContext } from "contexts/causesContext";
-import UserSupportSection from "pages/promoters/SupportTreasurePage/CardSection/UserSupportSection";
 import { track } from "@amplitude/analytics-browser";
 import Tooltip from "components/moleculars/Tooltip";
 import useBreakpoint from "hooks/useBreakpoint";
 import DownloadAppToast from "components/moleculars/Toasts/DownloadAppToast";
-import { normalizedLanguage } from "lib/currentLanguage";
+import WarningIcon from "assets/icons/warning-icon.svg";
+import extractUrlValue from "lib/extractUrlValue";
+import { PLATFORM } from "utils/constants";
+import { useReceiveTicketToast } from "hooks/toastHooks/useReceiveTicketToast";
+import UserSupportBanner from "components/moleculars/banners/UserSupportBanner";
 import * as S from "./styles";
+import ContributionNotification from "./ContributionNotification";
 import NonProfitsList from "./NonProfitsList";
 import { LocationStateType } from "./LocationStateType";
-import ConfirmSection from "./ConfirmSection";
 import ChooseCauseModal from "./ChooseCauseModal";
+import ContributionSection from "./ContributionSection";
 
 function CausesPage(): JSX.Element {
-  const [confirmModalVisible, setConfirmModalVisible] = useState(false);
   const [selectedButtonIndex, setSelectedButtonIndex] = useState(0);
-  const [donationInProcessModalVisible, setDonationInProcessModalVisible] =
-    useState(false);
-  const [chosenNonProfit, setChosenNonProfit] = useState<NonProfit>();
   const integrationId = useIntegrationId();
   const { integration } = useIntegration(integrationId);
 
@@ -50,100 +46,98 @@ function CausesPage(): JSX.Element {
     currentCauseId,
     setCurrentCauseId,
   } = useCausesContext();
+
   const { t } = useTranslation("translation", {
     keyPrefix: "donations.causesPage",
   });
-  const { state } = useLocation<LocationStateType>();
+  const { state, search } = useLocation<LocationStateType>();
 
   const { hide: closeWarningModal } = useModal(
     {
-      type: MODAL_TYPES.MODAL_ERROR,
+      type: MODAL_TYPES.MODAL_ICON,
       props: {
         title: t("errorModalTitle"),
         body: state?.message || t("errorModalText"),
-        buttonText: t("errorModalButtonText"),
+        primaryButton: {
+          text: t("errorModalButtonText"),
+          onClick: () => closeWarningModal(),
+        },
         onClose: () => closeWarningModal(),
-        warning: true,
+        icon: WarningIcon,
+        supportButton: true,
         eventName: "P1_donateErrorModal",
       },
     },
     state?.failedDonation,
   );
 
-  const hasNotSeenDonationModal = !getLocalStorageItem(
-    DONATION_MODAL_SEEN_AT_KEY,
+  const hasSeenDonationToast = !!getLocalStorageItem(
+    DONATION_TOAST_SEEN_AT_KEY,
   );
 
   const hasSeenChooseCauseModal = useRef(false);
 
-  const { nonProfits, isLoading } = useNonProfits();
-  const { findOrCreateUser } = useUsers();
-  const { createSource } = useSources();
-  const { signedIn, setCurrentUser } = useCurrentUser();
-  const { showDonationTicketModal } = useDonationTicketModal(
-    undefined,
-    integration,
+  const { nonProfits, isLoading } = useFreeDonationNonProfits();
+  const { showReceiveTicketToast } = useReceiveTicketToast();
+  const { signedIn, currentUser } = useCurrentUser();
+
+  const externalId = extractUrlValue("external_id", search);
+  const { canDonate, refetch: refetchCanDonate } = useCanDonate(
+    integrationId,
+    PLATFORM,
+    externalId,
   );
-  const { canDonate } = useCanDonate(integrationId);
-  const { createVoucher, destroyVoucher } = useVoucher();
+  const { createVoucher } = useVoucher();
+  const {
+    isFirstAccessToIntegration,
+    isLoading: isLoadingIsFirstAccessToIntegration,
+  } = useFirstAccessToIntegration(integration?.id || integrationId);
 
   const { isMobile } = useBreakpoint();
 
-  useEffect(() => {
-    if (canDonate) createVoucher();
-  }, [canDonate]);
-
   function hasReceivedTicketToday() {
-    const donationModalSeenAtKey = getLocalStorageItem(
-      DONATION_MODAL_SEEN_AT_KEY,
+    const donationToastSeenAtKey = getLocalStorageItem(
+      DONATION_TOAST_SEEN_AT_KEY,
     );
 
-    if (donationModalSeenAtKey) {
-      const dateUserSawModal = new Date(parseInt(donationModalSeenAtKey, 10));
-      return dateUserSawModal.toLocaleDateString() === today();
+    if (donationToastSeenAtKey) {
+      const dateUserSawToast = new Date(parseInt(donationToastSeenAtKey, 10));
+      return dateUserSawToast.toLocaleDateString() === today();
     }
     return false;
   }
 
-  const hasAvailableDonation = !state?.blockedDonation && canDonate;
+  const hasAvailableDonation = useCallback(
+    () => !state?.blockedDonation && canDonate,
+    [state?.blockedDonation, canDonate],
+  );
+
+  useEffect(() => {
+    refetchCanDonate();
+  }, [JSON.stringify(currentUser)]);
 
   useEffect(() => {
     track("Cause Page View");
   }, []);
 
   useEffect(() => {
-    if (
+    if (hasReceivedTicketToday() && hasAvailableDonation()) {
+      createVoucher();
+    } else if (
       !hasReceivedTicketToday() ||
-      (hasAvailableDonation && hasNotSeenDonationModal)
+      (hasAvailableDonation() && !hasSeenDonationToast)
     ) {
-      destroyVoucher();
-      if (integration) {
-        setLocalStorageItem(DONATION_MODAL_SEEN_AT_KEY, Date.now().toString());
-        showDonationTicketModal();
+      if (
+        integration &&
+        !isFirstAccessToIntegration &&
+        !isLoadingIsFirstAccessToIntegration
+      ) {
+        setLocalStorageItem(DONATION_TOAST_SEEN_AT_KEY, Date.now().toString());
+        showReceiveTicketToast();
+        createVoucher();
       }
     }
-  }, [integration]);
-
-  const closeConfirmModal = useCallback(() => {
-    setConfirmModalVisible(false);
-  }, []);
-
-  const donateTicket = useCallback(
-    async (email: string) => {
-      try {
-        if (!signedIn) {
-          const user = await findOrCreateUser(email, normalizedLanguage());
-          if (integration) {
-            createSource(user.id, integration.id);
-          }
-          setCurrentUser(user);
-        }
-      } catch (e) {
-        logError(e);
-      }
-    },
-    [chosenNonProfit],
-  );
+  }, [integration, isFirstAccessToIntegration]);
 
   useEffect(() => {
     if (chooseCauseModalVisible && !hasSeenChooseCauseModal.current) {
@@ -184,26 +178,17 @@ function CausesPage(): JSX.Element {
     ...(activeCauses || []),
   ];
 
+  const canDonateAndHasVoucher = canDonate && hasAvailableDonation();
+
   return (
     <S.Container>
       {!isFirstAccess(signedIn) && <DownloadAppToast />}
       <ChooseCauseModal visible={chooseCauseModalVisible} />
-      {chosenNonProfit && integration && (
-        <ConfirmSection
-          chosenNonProfit={chosenNonProfit}
-          donateTicket={donateTicket}
-          integration={integration}
-          setDonationInProcessModalVisible={setDonationInProcessModalVisible}
-          confirmModalVisible={confirmModalVisible}
-          donationInProcessModalVisible={donationInProcessModalVisible}
-          setConfirmModalVisible={setConfirmModalVisible}
-          closeConfirmModal={closeConfirmModal}
-        />
-      )}
 
       <S.BodyContainer>
         <S.TitleContainer>
           <S.Title>{t("pageTitle")}</S.Title>
+
           {!isMobile && (
             <Tooltip
               text={t("tooltipTicketText")}
@@ -214,6 +199,8 @@ function CausesPage(): JSX.Element {
             />
           )}
         </S.TitleContainer>
+        <ContributionNotification />
+        {!canDonateAndHasVoucher && <ContributionSection />}
         {!isFirstAccess(signedIn) && (
           <GroupButtons
             elements={causesWithAllFilter}
@@ -224,6 +211,7 @@ function CausesPage(): JSX.Element {
             eventName="P1_causeTab"
           />
         )}
+
         {isLoading ? (
           <Spinner size="26" />
         ) : (
@@ -231,8 +219,6 @@ function CausesPage(): JSX.Element {
             <S.NonProfitsContainer>
               <NonProfitsList
                 nonProfits={nonProfitsFilter()}
-                setChosenNonProfit={setChosenNonProfit}
-                setConfirmModalVisible={setConfirmModalVisible}
                 canDonate={canDonate}
                 integration={integration}
               />
@@ -250,7 +236,7 @@ function CausesPage(): JSX.Element {
             />
           </S.TooltipSection>
         )}
-        <UserSupportSection />
+        <UserSupportBanner from="donateTickets_page" />
       </S.BodyContainer>
     </S.Container>
   );

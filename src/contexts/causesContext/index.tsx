@@ -1,4 +1,4 @@
-import { useCauses } from "@ribon.io/shared/hooks";
+import { useFreeDonationCauses } from "@ribon.io/shared/hooks";
 import {
   createContext,
   SetStateAction,
@@ -7,7 +7,7 @@ import {
   useMemo,
   useState,
 } from "react";
-import Cause from "types/entities/Cause";
+import { Cause } from "@ribon.io/shared/types";
 
 export interface ICausesContext {
   causes: Cause[];
@@ -26,7 +26,7 @@ export const CausesContext = createContext<ICausesContext>(
 
 function CausesProvider({ children }: any) {
   const causeWasNotSelectedByModal = -1;
-  const { causes, refetch, isLoading } = useCauses();
+  const { causes, refetch, isLoading } = useFreeDonationCauses();
   const [activeCauses, setActiveCauses] = useState<Cause[]>([]);
   const [chooseCauseModalVisible, setChooseCauseModalVisible] = useState(false);
   const [currentCauseId, setCurrentCauseId] = useState(
@@ -38,9 +38,9 @@ function CausesProvider({ children }: any) {
   useEffect(() => {
     if (!isLoading) {
       setActiveCauses(causesFilter());
-      setCurrentCauseId(activeCauses[0]?.id);
+      setCurrentCauseId(causeWasNotSelectedByModal);
     }
-  }, [causes, isLoading]);
+  }, [JSON.stringify(causes), isLoading]);
 
   const causesObject: ICausesContext = useMemo(
     () => ({

@@ -5,10 +5,7 @@ import { useCurrentUser } from "contexts/currentUserContext";
 import cogIcon from "assets/icons/cog-icon.svg";
 import ticketOn from "assets/icons/ticket-icon-on.svg";
 import ticketOff from "assets/icons/ticket-icon-off.svg";
-import Ticket from "assets/images/ticket.svg";
-import { useTranslation } from "react-i18next";
 import useVoucher from "hooks/useVoucher";
-import { MODAL_TYPES } from "contexts/modalContext/helpers";
 import { useState } from "react";
 import { Divider } from "components/atomics/Divider/styles";
 import theme from "styles/theme";
@@ -16,9 +13,12 @@ import useBreakpoint from "hooks/useBreakpoint";
 import { useIntegrationId } from "hooks/useIntegrationId";
 import useNavigation from "hooks/useNavigation";
 import { useBlockedDonationModal } from "hooks/modalHooks/useBlockedDonationModal";
-import { RIBON_COMPANY_ID } from "utils/constants";
+import { PLATFORM, RIBON_COMPANY_ID } from "utils/constants";
 import { logEvent, newLogEvent } from "lib/events";
-import { useModal } from "hooks/modalHooks/useModal";
+import extractUrlValue from "lib/extractUrlValue";
+import { useBlockedDonationContributionModal } from "hooks/modalHooks/useBlockedDonationContributionModal";
+import { useImpactConversion } from "hooks/useImpactConversion";
+import { shouldRenderVariation } from "lib/handleVariation";
 import ChangeLanguageItem from "./ChangeLanguageItem";
 import LogoutItem from "./LogoutItem";
 import * as S from "./styles";
@@ -48,39 +48,17 @@ function LayoutHeader({
     undefined,
     integration,
   );
-  const { canDonate } = useCanDonate(integrationId);
-  const { isVoucherAvailable } = useVoucher();
+  const externalId = extractUrlValue("external_id", history.location.search);
+  const { canDonate } = useCanDonate(integrationId, PLATFORM, externalId);
 
-  const { t } = useTranslation("translation", {
-    keyPrefix: "layouts.layoutHeader",
-  });
+  const { isVoucherAvailable } = useVoucher();
 
   const canDonateAndHasVoucher = canDonate && isVoucherAvailable();
 
-  const { show, hide } = useModal({
-    type: MODAL_TYPES.MODAL_ICON,
-    props: {
-      title: t("donationModalTitle"),
-      body: t("donationModalBody"),
-      primaryButton: {
-        text: t("donationModalButtonText"),
-        onClick: () => {
-          if (history.location.pathname === "/") {
-            hide();
-          } else {
-            navigateTo("/");
-            hide();
-          }
-        },
-        eventName: "ticketModalBtn",
-        eventParams: { ticketQtd: 1 },
-      },
-      onClose: () => hide(),
-      icon: Ticket,
-      eventName: "ticketModal",
-      eventParams: { ticketQtd: 1 },
-    },
-  });
+  const { contribution, variation } = useImpactConversion();
+
+  const { showBlockedDonationContributionModal } =
+    useBlockedDonationContributionModal();
 
   if (!integrationId) return <div />;
 
@@ -96,10 +74,14 @@ function LayoutHeader({
   function handleCounterClick() {
     if (canDonateAndHasVoucher) {
       newLogEvent("click", "ticketIcon", { ticketQtd: 1 });
-      show();
+      navigateTo("/tickets");
     } else {
       newLogEvent("click", "ticketIcon", { ticketQtd: 0 });
-      showBlockedDonationModal();
+      if (shouldRenderVariation(variation) && !!contribution) {
+        showBlockedDonationContributionModal();
+      } else {
+        showBlockedDonationModal();
+      }
     }
   }
 
@@ -108,6 +90,21 @@ function LayoutHeader({
 
     return integration?.logo;
   }
+
+  function handleSideLogoClick() {
+    if (!integration?.integrationTask?.linkAddress) return;
+    if (canDonateAndHasVoucher) {
+      navigateTo("return-to-integration");
+      return;
+    }
+
+    newLogEvent("click", "backIntegration", { from: "header" });
+    window.open(integration.integrationTask.linkAddress);
+  }
+
+  const onSideLogoClick = integration?.integrationTask?.linkAddress
+    ? handleSideLogoClick
+    : undefined;
 
   return (
     <S.Container>
@@ -151,6 +148,7 @@ function LayoutHeader({
         hasBackButton={hasBackButton}
         onBackButtonClick={navigateBack}
         sideLogo={renderSideLogo()}
+        onSideLogoClick={onSideLogoClick}
         rightComponent={
           <S.ContainerRight>
             {rightComponent}

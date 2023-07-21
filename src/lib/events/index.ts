@@ -1,6 +1,7 @@
-import { logAmplitudeEvent } from "services/analytics/amplitude";
 import { logFirebaseEvent } from "services/analytics/firebase";
 import { logMixpanelEvent } from "services/analytics/mixpanel";
+import { logDebugEvent } from "config/debugEventsView";
+import { DEBUG_EVENTS_ENABLED } from "utils/constants";
 import events from "./constants";
 
 function eventPageTransalation(url: string) {
@@ -11,10 +12,6 @@ export interface EventParams {
   [key: string]: string | number | undefined;
 }
 
-const integrationName = localStorage.getItem("integrationName") ?? "false";
-const installationId = localStorage.getItem("installationId") ?? "false";
-const hasDonated = localStorage.getItem("HAS_DONATED") ?? "false";
-
 export function logEvent(
   eventName: string,
   eventParams: EventParams = {},
@@ -23,16 +20,17 @@ export function logEvent(
     throw new EventNameTooLongError();
   } else if (process.env.NODE_ENV === "production") {
     const convertedParams = eventParams;
-
-    convertedParams.anonymousId = installationId;
-    convertedParams.integrationName = integrationName;
-    convertedParams.hasDonated = hasDonated;
+    convertedParams.anonymousId =
+      localStorage.getItem("installationId") ?? "false";
+    convertedParams.integrationName =
+      localStorage.getItem("integrationName") ?? "false";
+    convertedParams.hasDonated = localStorage.getItem("HAS_DONATED") ?? "false";
 
     logFirebaseEvent(eventName, convertedParams);
-    if (eventName.includes("web_")) {
-      logMixpanelEvent(eventName, convertedParams);
-      logAmplitudeEvent(eventName, convertedParams);
-    }
+    logMixpanelEvent(eventName, convertedParams);
+  }
+  if (DEBUG_EVENTS_ENABLED && logDebugEvent) {
+    logDebugEvent(eventName, eventParams);
   }
 }
 
@@ -74,6 +72,6 @@ export function logPageView(
   const pageName = eventPageTransalation(urlName + query + flow);
 
   if (pageName) {
-    newLogEvent("view", pageName, params);
+    logEvent(`${pageName}_view`, params);
   }
 }

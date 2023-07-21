@@ -18,12 +18,15 @@ import { logEvent } from "lib/events";
 import { logError } from "services/crashReport";
 import { Currencies, Cause, NonProfit } from "@ribon.io/shared/types";
 import creditCardPaymentApi from "services/api/creditCardPaymentApi";
-import successIcon from "assets/icons/success-icon.svg";
 import GivingIcon from "assets/icons/giving-icon.svg";
 import Logo from "assets/icons/logo-background-icon.svg";
 import UserIcon from "assets/icons/user.svg";
 import { useIntegrationId } from "hooks/useIntegrationId";
 import { getLocalStorageItem, setLocalStorageItem } from "lib/localStorage";
+import { useIntegration, useSources, useUsers } from "@ribon.io/shared/hooks";
+import { normalizedLanguage } from "lib/currentLanguage";
+import { CONTRIBUTION_INLINE_NOTIFICATION } from "pages/donations/CausesPage/ContributionNotification";
+import { PLATFORM } from "utils/constants";
 
 export interface ICardPaymentInformationContext {
   setCurrentCoin: (value: SetStateAction<Currencies>) => void;
@@ -54,7 +57,7 @@ export interface ICardPaymentInformationContext {
   cryptoGiving: string;
   offerId: number;
   flow: "cause" | "nonProfit";
-  handleSubmit: () => void;
+  handleSubmit: (platform: string) => void;
   cause: Cause | undefined;
   setCause: (value: SetStateAction<Cause | undefined>) => void;
   nonProfit: NonProfit | undefined;
@@ -111,8 +114,28 @@ function CardPaymentInformationProvider({ children }: Props) {
   const { navigateTo } = useNavigation();
 
   const toast = useToast();
+  const { findOrCreateUser } = useUsers();
+  const { signedIn, setCurrentUser } = useCurrentUser();
+  const { integration } = useIntegration(integrationId);
+  const { createSource } = useSources();
 
-  const handleConfirmation = () => {
+  const login = async () => {
+    if (!signedIn) {
+      try {
+        const user = await findOrCreateUser(email, normalizedLanguage());
+        if (integration) {
+          createSource(user.id, integration.id);
+        }
+        setCurrentUser(user);
+      } catch (e) {
+        logError(e);
+      }
+    }
+  };
+
+  const handleConfirmation = async () => {
+    setLocalStorageItem(CONTRIBUTION_INLINE_NOTIFICATION, "3");
+    login();
     navigateTo({
       pathname: "/donation-done-cause",
       state: {
@@ -124,27 +147,6 @@ function CardPaymentInformationProvider({ children }: Props) {
       },
     });
   };
-
-  const { show, hide } = useModal({
-    type: MODAL_TYPES.MODAL_ICON,
-    props: {
-      title: t("modalSuccessTitle").replace("{{value}}", cryptoGiving),
-      body: t("modalSuccessDescription"),
-      icon: successIcon,
-      primaryButton: {
-        text: t("modalSuccessButton"),
-        onClick: () => {
-          handleConfirmation();
-          hide();
-        },
-      },
-      onClose: () => {
-        handleConfirmation();
-
-        hide();
-      },
-    },
-  });
 
   const { show: showAnimationModal, hide: closeAnimationModal } = useModal({
     type: MODAL_TYPES.MODAL_ANIMATION,
@@ -165,7 +167,7 @@ function CardPaymentInformationProvider({ children }: Props) {
     }, 3000);
   };
 
-  const handleSubmit = async () => {
+  const handleSubmit = async (platform: string) => {
     logEvent("treasureSupportConfirmBtn_click");
     showAnimationCreditCardPaymentModal();
 
@@ -188,19 +190,20 @@ function CardPaymentInformationProvider({ children }: Props) {
       },
       causeId: cause?.id,
       nonProfitId: nonProfit?.id,
+      platform: platform || PLATFORM,
     };
 
     try {
       await creditCardPaymentApi.postCreditCardPayment(paymentInformation);
-      show();
-
+      closeAnimationModal();
+      handleConfirmation();
       logEvent("treasureGivingConfirmMdl_view");
     } catch (error) {
       closeAnimationModal();
       logError(error);
       toast({
         message: t("onErrorMessage"),
-        type: "error",
+        type: "info",
       });
 
       logEvent("toastNotification_view", {

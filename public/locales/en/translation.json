@@ -21,6 +21,7 @@
       "receiveTicketAnimationModalTitle": "Receiving Ticket...",
       "receiveTicketAnimationModalOrigin": "Community",
       "receiveTicketAnimationModalDestiny": "You",
+      "ticketToast": "You have a new ticket!",
       "donateAnimationModalTitle": "Making donation...",
       "donateAnimationModalOrigin": "You",
       "donateAnimationModalDestiny": "Project",
@@ -29,24 +30,34 @@
       "learnMore": "Learn more",
       "tooltipTicketText": "Tickets are used to make donations and you get a new one everyday when you log in Ribon.",
       "tooltipTicket": "What is a ticket?",
+      "noCauses": {
+        "title": "No causes available",
+        "text": "But you can contribute donating in community for a cause",
+        "button": "Donate in community"
+      },
       "stories": {
         "loading": "Loading stories...",
         "empty": "No stories available."
       },
       "modalForm": {
-        "footerStartText": "By signing up you agree to Ribon's",
-        "footerAnd": "and",
-        "useTermsText": "Terms of Service",
+        "footerStartText": "By clicking Confirm I agree on Ribon’s",
+        "footerEndText": " and",
+        "termsText": "Terms",
+        "termsLink": "https://ribon.io/en/privacy-policy/#terms",
         "privacyPolicyText": "Privacy Policy",
-        "privacyPolicyLink": "https://ribon.io/2022/06/10/privacy-and-personal-data-retention-policy/",
-        "useTermsLink": "https://blog.ribon.io/2021/07/12/termos-e-condicoes-de-uso-da-ribon/",
-        "accessUserSupport": "Access user support"
+        "privacyPolicyLink": "https://ribon.io/en/privacy-policy/#privacy",
+        "accessUserSupport": "Access user support",
+        "userSupportLink": "https://api.whatsapp.com/send/?phone=554896605461&text=Hii+Ribon%2C+let’s+talk%3F+&type=phone_number&app_absent=0"
       },
       "blockedModal": {
         "title": "You have no more tickets :(",
         "text": "Would you like to receive more?",
         "ribonTitle": "Ribon gift",
-        "ribonText": "Come back tomorrow to receive 1 more ticket"
+        "ribonText": "Come back tomorrow to receive 1 more ticket",
+        "titleContributionModal": "You used all your tickets",
+        "descriptionContributionModal": "How about making a paid donation?",
+        "buttonContributionModal": "Donate {{value}}",
+        "textContributionModal": "Donate {{value}} to {{nonProfitName}}"
       }
     },
     "storiesPage": {
@@ -57,7 +68,10 @@
       "donateAsCommunity": "Donate as a community to",
       "donateDirectly": "Donate directly to",
       "donateLater": "Donate later",
-      "boostedDonation": "Boosted donation"
+      "boostedDonation": "Boosted donation",
+      "donate": "Donate {{value}} to",
+      "donateButton": "Donate {{value}}",
+      "donateNow": "Donate now"
     },
     "donationDonePage": {
       "title": "Thank you for the donation!",
@@ -78,9 +92,49 @@
     "menu": {
       "impactPageTitle": "Impact",
       "causesPageTitle": "Tickets",
+      "forYouPageTitle": "For you",
       "givingPageTitle": "Giving",
       "communityMenuItem": "Community",
       "directDonationMenuItem": "Direct donation"
+    },
+    "giveTicketPage": {
+      "onboardingRibonTitle": "Welcome to Ribon!",
+      "onboardingIntegrationTitle": "{{integrationName}} brought you here!",
+      "onboardingSubtitle": "Your donation ticket is available",
+      "onboardingButtonText": "Get my ticket",
+      "title": "You have 1 ticket!",
+      "integrationSubtitle": "Keep with {{integrationName}} and get new tickets",
+      "subtitle": "Every day when you login in Ribon you get a new ticket.",
+      "buttonText": "Donate ticket",
+      "tooltipTicketText": "Tickets are used to make donations and you get a new one everyday when you log in Ribon.",
+      "tooltipTicket": "What is a ticket?"
+    },
+    "receiveTicketPage": {
+      "textOrigin": "Community",
+      "textDestiny": "You",
+      "description": "Receiving ticket..."
+    },
+    "returnToIntegrationPage": {
+      "title": "You still have tickets left",
+      "subtitle": "Do you want to go out without donating?",
+      "returnButtonText": "Return to {{integrationName}}",
+      "stayButtonText": "Stay in Ribon"
+    },
+    "confirmDonationPage": {
+      "signedInSection": {
+        "title": "Your donation",
+        "confirmText": "Confirm donation"
+      },
+      "signInSection": {
+        "title": "Enter your e-mail to donate",
+        "confirmText": "Continue",
+        "footerStartText": "By clicking Confirm I agree on Ribon’s",
+        "footerEndText": " and",
+        "termsText": "Terms",
+        "termsLink": "https://ribon.io/en/privacy-policy/#terms",
+        "privacyPolicyText": "Privacy Policy",
+        "privacyPolicyLink": "https://ribon.io/en/privacy-policy/#privacy"
+      }
     }
   },
   "layouts": {
@@ -89,8 +143,10 @@
         "changeLanguageText": "Change language"
       },
       "userSupportItem": {
-        "userSupportText": "User Support"
+        "userSupportText": "User Support",
+        "userSupportLink": "https://api.whatsapp.com/send/?phone=554896605461&text=Hii+Ribon%2C+let’s+talk%3F+&type=phone_number&app_absent=0"
       },
+
       "getTheAppItem": {
         "getTheAppText": "Get the app"
       },
@@ -109,6 +165,11 @@
     },
     "walletLayout": {
       "connectWallet": "Connect"
+    },
+    "userSupportBanner": {
+      "title": "Access user support",
+      "text": "Questions, ideias, refunds. We’re here!",
+      "userSupportLink": "https://api.whatsapp.com/send/?phone=554896605461&text=Hii+Ribon%2C+let’s+talk%3F+&type=phone_number&app_absent=0"
     }
   },
   "impactPage": {
@@ -131,7 +192,8 @@
       "emptyTitle": "Your ticket donations will appear here.",
       "emptyText": "You have not made free donations using tickets yet, why not try your first one?",
       "emptyButton": "Donate using tickets",
-      "showMore": "Show more"
+      "showMore": "Show more",
+      "migrated": "Migrated"
     },
     "directSection": {
       "emptyTitle": "Your direct donations will appear here.",
@@ -147,7 +209,18 @@
       "emptyButton": "Donate in community",
       "tooltipFirstParagraphText": "Net donation: {{value}}",
       "tooltipSecondParagraphText": "Service fees: {{value}}",
-      "showMore": "Show more"
+      "showMore": "Show more",
+      "generalReceiver": "General",
+      "migrated": "Migrated",
+      "cardText": "The community increases the donation amount by <b>+20%.</b>",
+      "callToAction": "Monitor increase ->",
+      "titleCard": "Help the {{cause}} cause",
+      "communityDescription": "The community will boost your donation with"
+    },
+    "impactNotification": {
+      "title": "We have imported your impact!",
+      "description": "Your history of donations from the old platform are in the \"Ticket donations\" tab.",
+      "link": "Don’t show this again"
     }
   },
   "promoters": {
@@ -261,7 +334,8 @@
         "userSupportCard": {
           "title": "Ribon Support",
           "description": "Questions, ideas, refunds about donations!",
-          "primaryButtonText": "Access user support"
+          "primaryButtonText": "Contact us",
+          "userSupportLink": "https://api.whatsapp.com/send/?phone=554896605461&text=Hii+Ribon%2C+let’s+talk%3F+&type=phone_number&app_absent=0"
         }
       },
       "linkMessageToast": "Learn more"
@@ -277,6 +351,35 @@
         "netDonationText": "Net donation:",
         "serviceFeesText": "Service fees:"
       }
+    },
+    "checkoutPage": {
+      "changeCurrency": "Change currency",
+      "back": "Back",
+      "donatingTo": "Donating to ",
+      "netDonation": "Net donation: ",
+      "serviceFees": "Service fees: ",
+      "payment": "Payment",
+      "selectCurrency": "Select currency",
+      "selectValue": "Select value",
+      "additionalFeesText": "Payment is processed in USD, the amount may vary slightly according to your bank's fees.",
+      "brazilName": "Brazil",
+      "paymentMethodSection": {
+        "creditCard": "Credit card",
+        "googlePay": "Google Pay",
+        "applePay": "Apple Pay",
+        "creditCardFields": {
+          "country": "Country",
+          "state": "State",
+          "city": "City",
+          "taxId": "Tax ID",
+          "cpf": "CPF",
+          "number": "Card number",
+          "name": "Cardholder name",
+          "expirationDate": "Expiration date",
+          "cvv": "CVV"
+        }
+      },
+      "confirmPayment": "Confirm payment"
     }
   },
   "contexts": {
@@ -295,6 +398,9 @@
       "modalAnimationFrom": "You",
       "modalAnimationTo": "Ribon",
       "modalAnimationTitle": "Processing giving..."
+    },
+    "tasksContext": {
+      "allTasksCompleted": "You completed all tasks!"
     }
   },
   "impactNormalizer": {
@@ -308,16 +414,99 @@
     "and": "and",
     "of": "of"
   },
-  "appInDevelopmentPage": {
-    "title": "App in development",
-    "description": "Don't worry, we’ll remember you to download it when its released",
-    "surveyDescription": "Take this survey and help us build the app",
-    "surveyButton": "Take survey",
-    "surveyLink": "https://docs.google.com/forms/d/e/1FAIpQLSc6Z7YQh56lIxD3uh1kX8TwlbkF6c9Q4nkQ1SXdblOljzFs-w/viewform?usp=sf_link"
+  "appDownloadPage": {
+    "title": "Get Ribon's Beta mobile app",
+    "description": "Get the best donation experience we can offer and access exclusive features!",
+    "buttonBack": "Go back",
+    "buttonSkip": "Skip",
+    "buttonCopyLink": "Copy link",
+    "buttonDownloadApp": "Download app",
+    "buttonCopyLinkSuccess": "Copied!",
+    "pasteLink": "Paste this link on your mobile browser",
+    "scanQrCode": "Scan QR Code",
+    "chooseStore": "Choose a store",
+    "copyText": "Copy link",
+    "copiedText": "Copied!"
   },
   "downloadApp": {
     "floating": {
       "title": "Get app"
     }
+  },
+  "forYouPage": {
+    "title": "For you",
+    "forYouMenu": {
+      "tasks": "Tasks",
+      "news": "Posts"
+    },
+    "newsSection": {
+      "title": "Get the app and check out what's new for you",
+      "getAppButtonText": "Get app"
+    },
+    "tasksSection": {
+      "title": "Tasks",
+      "countdown": "until task reset",
+      "new": "New",
+      "titleSuperTasks": "Super tasks",
+      "tasks": {
+        "donate_ticket": "Donate ticket",
+        "download_app": "Download app",
+        "make_contribution": "Make a paid donation"
+      },
+      "cardsStatisticsSection": {
+        "dailyTasksTitle": "daily tasks completed",
+        "superTasksTitle": "super tasks completed",
+        "streakTitle": "days in a row completing tasks"
+      }
+    }
+  },
+  "deleteAccountPage": {
+    "loading": "Loading...",
+    "invalidLink": "Invalid link",
+    "accountDeleted": "Account deleted",
+    "accountDeletedText": "If you try to sign in, you will need to create a new account without access to your previous impact data"
+  },
+  "downloadAppModalTemplate": {
+    "title": "Get Ribon's mobile app",
+    "description": "Get the best donation experience we can offer and access exclusive features!",
+    "button": "Download app"
+  },
+  "contributionStatsPage": {
+    "title": "You donated <span>{{amount}}</span> for <span>{{cause}}</span>",
+    "engagementSection": {
+      "title": "Your donation generated tickets",
+      "numberOfTicketDonors": "people have already donated tickets",
+      "numberOfContributorsDonors": "donated money inspired by you"
+    },
+    "boostSection": {
+      "title": "Your cause gets more",
+      "subtitle": "Total raised for your cause so far",
+      "tip": "By donating money through Ribon,<strong>you generate tickets</strong> so that other people can donate for free. With that, some of them <strong>are inspired to donate money too.</strong>"
+    },
+    "video": {
+      "title": "Understand how the Ribon community <b>increases your donation</b>"
+    },
+    "supportSection": {
+      "title": "Give us your opinion",
+      "text": "What did you think of this experience?"
+    },
+    "giftCycleSection": {
+      "realTimeDonationLabel": "Updated in real time"
+    }
+  },
+  "contributionNotification": {
+    "title": "Thanks for the donation!",
+    "description": "Track the increase in your donation on the Impact tab, in Community Donations.",
+    "link": "Follow donation!"
+  },
+  "contributionSection": {
+    "title": "Amazing! Thank you for helping {{nonProfitName}}",
+    "titleCard": "Do even more",
+    "nonProfits": "NGOs"
+  },
+  "contributionCard": {
+    "button": "Donate",
+    "donate": "Donate {{value}}",
+    "titleCard": "Do even more"
   }
 }

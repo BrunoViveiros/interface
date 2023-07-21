@@ -2,12 +2,13 @@ import React, { Suspense, useEffect } from "react";
 import { Switch, Route } from "react-router-dom";
 import WalletProvider from "contexts/walletContext";
 import CausesPage from "pages/donations/CausesPage";
-import ConfirmEmailPage from "pages/donations/ConfirmEmailPage";
+import ConfirmDonationPage from "pages/donations/ConfirmDonationPage";
 import DonationDonePage from "pages/donations/DonationDonePage";
 import DonationDoneCausePage from "pages/donations/DonationDoneCausePage";
 import ImpactPage from "pages/users/ImpactPage";
 import MainLayout from "layouts/MainLayout";
 import TreasurePage from "pages/promoters/TreasurePage";
+import CheckoutPage from "pages/promoters/CheckoutPage";
 import SupportTreasurePage from "pages/promoters/SupportTreasurePage";
 import SupportCausePage from "pages/promoters/SupportCausePage";
 import BillingInformationPage from "pages/promoters/SupportTreasurePage/CardSection/BillingInformationPage";
@@ -16,16 +17,22 @@ import GivingsPage from "pages/promoters/GivingsPage";
 import WalletLayout from "layouts/WalletLayout";
 import CardPaymentInformationProvider from "contexts/cardPaymentInformationContext";
 import NetworkProvider from "contexts/networkContext";
-import CausesProvider from "contexts/causesContext";
 import CommunityAddPage from "pages/promoters/SupportCausePage/CommunityAddPage";
 import PostDonationPage from "pages/donations/PostDonationPage";
 import CryptoPaymentProvider from "contexts/cryptoPaymentContext";
 import SupportNonProfitPage from "pages/promoters/SupportNonProfitPage";
+import DeleteAccountPage from "pages/users/DeleteAccountPage";
 import PaymentPage from "pages/promoters/PaymentPage";
 import { useLocation } from "react-router";
 import { logPageView } from "lib/events";
-import AppInDevelopmentPage from "pages/users/AppInDevelopmentPage";
-import Navigation from "./Navigation";
+import AppInDevelopmentPage from "pages/users/AppDownloadPage";
+import ForYouPage from "pages/users/ForYouPage";
+import GiveTicketPage from "pages/donations/GiveTicketPage";
+import ReceiveTicketPage from "pages/donations/ReceiveTicketPage";
+import LoadingPage from "pages/donations/LoadingPage";
+import ContributionStatsPage from "pages/users/ContributionStatsPage";
+import ReturnToIntegrationPage from "pages/donations/ReturnToIntegrationPage";
+import NavigationBackHeader from "./Navigation/NavigationBackHeader";
 
 function RoutesComponent(): JSX.Element {
   const location = useLocation();
@@ -41,26 +48,54 @@ function RoutesComponent(): JSX.Element {
     <Switch>
       <Route path="/" exact>
         <Suspense fallback={<div />}>
+          <LoadingPage />
+        </Suspense>
+      </Route>
+
+      <Route path="/causes" exact>
+        <Suspense fallback={<div />}>
           <WalletProvider>
-            <CausesProvider>
-              <MainLayout>
-                <CausesPage />
-              </MainLayout>
-            </CausesProvider>
+            <MainLayout>
+              <CausesPage />
+            </MainLayout>
           </WalletProvider>
         </Suspense>
       </Route>
 
-      <Route path="/app-in-development" exact>
+      <Route path="/intro" exact>
+        <Suspense fallback={<div />}>
+          <GiveTicketPage isOnboarding />
+        </Suspense>
+      </Route>
+
+      <Route path="/tickets" exact>
+        <Suspense fallback={<div />}>
+          <GiveTicketPage />
+        </Suspense>
+      </Route>
+
+      <Route path="/return-to-integration" exact>
+        <Suspense fallback={<div />}>
+          <ReturnToIntegrationPage />
+        </Suspense>
+      </Route>
+
+      <Route path="/app-download" exact>
         <Suspense fallback={<div />}>
           <AppInDevelopmentPage />
         </Suspense>
       </Route>
 
-      <Route path="/confirm-email" exact>
+      <Route path="/receive-ticket" exact>
         <Suspense fallback={<div />}>
-          <Navigation />
-          <ConfirmEmailPage />
+          <ReceiveTicketPage />
+        </Suspense>
+      </Route>
+
+      <Route path="/confirm-donation" exact>
+        <Suspense fallback={<div />}>
+          <NavigationBackHeader />
+          <ConfirmDonationPage />
         </Suspense>
       </Route>
 
@@ -87,6 +122,26 @@ function RoutesComponent(): JSX.Element {
           <WalletProvider>
             <MainLayout>
               <ImpactPage />
+            </MainLayout>
+          </WalletProvider>
+        </Suspense>
+      </Route>
+
+      <Route path="/contribution-stats/:contributionId" exact>
+        <Suspense fallback={<div />}>
+          <WalletProvider>
+            <MainLayout hasBackButton>
+              <ContributionStatsPage />
+            </MainLayout>
+          </WalletProvider>
+        </Suspense>
+      </Route>
+
+      <Route path="/forYou" exact>
+        <Suspense fallback={<div />}>
+          <WalletProvider>
+            <MainLayout>
+              <ForYouPage />
             </MainLayout>
           </WalletProvider>
         </Suspense>
@@ -209,6 +264,28 @@ function RoutesComponent(): JSX.Element {
               </WalletLayout>
             </WalletProvider>
           </NetworkProvider>
+        </Suspense>
+      </Route>
+
+      <Route path="/promoters/checkout" exact>
+        <Suspense fallback={<div />}>
+          <NetworkProvider>
+            <WalletProvider>
+              <WalletLayout hideNavigation>
+                <CardPaymentInformationProvider>
+                  <CryptoPaymentProvider>
+                    <CheckoutPage />
+                  </CryptoPaymentProvider>
+                </CardPaymentInformationProvider>
+              </WalletLayout>
+            </WalletProvider>
+          </NetworkProvider>
+        </Suspense>
+      </Route>
+
+      <Route path="/delete_account" exact>
+        <Suspense fallback={<div />}>
+          <DeleteAccountPage />
         </Suspense>
       </Route>
     </Switch>

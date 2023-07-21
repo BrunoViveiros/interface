@@ -1,27 +1,24 @@
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { getLocalStorageItem, setLocalStorageItem } from "lib/localStorage";
-import { Languages } from "types/enums/Languages";
-
-export const LANGUAGE_KEY = "LANGUAGE_KEY";
+import { Languages } from "@ribon.io/shared/types";
+import { normalizedLanguage } from "lib/currentLanguage";
 
 export function useLanguage() {
   const { i18n } = useTranslation();
   const [currentLang, setCurrentLang] = useState<Languages>(
-    (getLocalStorageItem(LANGUAGE_KEY) as Languages) || Languages.PT,
+    normalizedLanguage(),
   );
 
   useEffect(() => {
     i18n.changeLanguage(currentLang);
-    setLocalStorageItem(LANGUAGE_KEY, currentLang);
-  }, [currentLang, i18n]);
+  }, [currentLang]);
 
   function handleSwitchLanguage() {
-    if (currentLang === Languages.EN) {
+    if (currentLang === Languages.en) {
       setCurrentLang(Languages.PT);
       window.location.reload();
     } else if (currentLang === Languages.PT) {
-      setCurrentLang(Languages.EN);
+      setCurrentLang(Languages.en);
       window.location.reload();
     }
   }

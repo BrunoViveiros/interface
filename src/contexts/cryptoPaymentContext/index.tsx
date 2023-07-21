@@ -21,6 +21,7 @@ import { logError } from "services/crashReport";
 import { stringToNumber } from "lib/formatters/stringToNumberFormatter";
 import { logEvent } from "lib/events";
 import { BigNumber, utils } from "ethers";
+import { PLATFORM } from "utils/constants";
 import { useWalletContext } from "../walletContext";
 import { useLoadingOverlay } from "../loadingOverlayContext";
 import { useNetworkContext } from "../networkContext";
@@ -40,7 +41,7 @@ export interface ICryptoPaymentContext {
   amount: string;
   setAmount: (amount: string) => void;
   insufficientBalance: () => boolean;
-  currentPool: string;
+  currentPool?: string;
   setCurrentPool: (pool: string) => void;
   userBalance: string;
   tokenSymbol: string;
@@ -57,34 +58,38 @@ export const CryptoPaymentContext = createContext<ICryptoPaymentContext>(
 function CryptoPaymentProvider({ children }: Props) {
   const [amount, setAmount] = useState("");
   const [loading, setLoading] = useState(false);
-  const [userBalance, setUserBalance] = useState("");
+  const [userBalance, setUserBalance] = useState("0");
   const { currentNetwork } = useNetworkContext();
   const { tokenDecimals } = useTokenDecimals();
   const [currentPool, setCurrentPool] = useState(
-    currentNetwork.defaultPoolAddress,
+    currentNetwork?.defaultPoolAddress,
   );
-  const [tokenSymbol, setTokenSymbol] = useState("");
+  const [tokenSymbol, setTokenSymbol] = useState("USDC");
 
   const integrationId = useIntegrationId();
 
   const { t } = useTranslation("translation", {
     keyPrefix: "promoters.supportTreasurePage",
   });
+
   const contract = useContract({
-    address: currentNetwork.ribonContractAddress,
+    address: currentNetwork?.ribonContractAddress,
     ABI: RibonAbi.abi,
+    currentNetwork,
   });
   const donationTokenContract = useContract({
-    address: currentNetwork.donationTokenContractAddress,
+    address: currentNetwork?.donationTokenContractAddress,
     ABI: DonationTokenAbi.abi,
+    currentNetwork,
   });
+
   const { showLoadingOverlay, hideLoadingOverlay } = useLoadingOverlay();
   const { wallet } = useWalletContext();
   const { createTransaction } = useCryptoTransaction();
 
   const approveAmount = async () =>
     donationTokenContract?.functions.approve(
-      currentNetwork.ribonContractAddress,
+      currentNetwork?.ribonContractAddress,
       formatToDecimals(amount, tokenDecimals).toString(),
       {
         from: wallet,
@@ -95,18 +100,21 @@ function CryptoPaymentProvider({ children }: Props) {
     contract?.functions.addPoolBalance(
       currentPool,
       formatToDecimals(amount, tokenDecimals).toString(),
+      true,
     );
 
   const fetchUsdcUserBalance = useCallback(async () => {
     try {
-      const balance = await donationTokenContract?.balanceOf(wallet);
+      const balance = wallet
+        ? await donationTokenContract?.balanceOf(wallet)
+        : 0;
       const formattedBalance = formatFromDecimals(balance, tokenDecimals);
-
       setUserBalance(formattedBalance.toString());
     } catch (error) {
       logError(error);
+      setUserBalance("0");
     }
-  }, [wallet, tokenDecimals]);
+  }, [wallet, tokenDecimals, donationTokenContract]);
 
   useEffect(() => {
     fetchUsdcUserBalance();
@@ -120,7 +128,7 @@ function CryptoPaymentProvider({ children }: Props) {
   };
 
   const disableButton = () =>
-    amount === "0.00" || insufficientBalance() || loading;
+    amount === "0.00" || (wallet && insufficientBalance()) || loading;
 
   const handleDonationToContract = async (
     causeId: number,
@@ -143,6 +151,7 @@ function CryptoPaymentProvider({ children }: Props) {
         wallet ?? "",
         integrationId ?? 1,
         causeId ?? 1,
+        PLATFORM,
       );
 
       if (onSuccess) onSuccess(hash, timestamp, utils.parseEther(amount));
@@ -158,8 +167,13 @@ function CryptoPaymentProvider({ children }: Props) {
   };
 
   const fetchTokenSymbol = useCallback(async () => {
-    const contractSymbol = await donationTokenContract?.functions.symbol();
-    setTokenSymbol(contractSymbol);
+    try {
+      const contractSymbol = await donationTokenContract?.functions.symbol();
+      if (contractSymbol) setTokenSymbol(contractSymbol);
+    } catch (error) {
+      logError(error);
+      setTokenSymbol("USDC");
+    }
   }, [donationTokenContract]);
 
   useEffect(() => {

@@ -4,7 +4,7 @@ import * as S from "./styles";
 export type Props = {
   icon?: string;
   title?: string | number;
-  text?: string | JSX.Element;
+  text?: string | JSX.Element | JSX.Element[];
   titleColor?: string;
   textColor?: string;
   value?: string | number;
@@ -16,6 +16,9 @@ export type Props = {
   tooltipPosition?: "center" | "left" | "right";
   idTooltip: string;
   size?: "large";
+  label?: string;
+  onPress?: () => void;
+  callToAction?: string;
 };
 function CardTooltip({
   icon,
@@ -31,12 +34,20 @@ function CardTooltip({
   tooltipPosition = "center",
   idTooltip,
   size,
+  label,
+  onPress,
+  callToAction,
 }: Props): JSX.Element {
+  const press = () => {
+    if (onPress) onPress();
+  };
+
   return (
-    <S.Container size={size}>
+    <S.Container size={size} onClick={() => press()}>
       {icon && <S.Image src={icon} />}
       <S.Title textColor={titleColor}>{title}</S.Title>
       <S.Value textColor={valueColor}>{value}</S.Value>
+      {label && <S.Label>{label}</S.Label>}
       {text && <S.Text>{text}</S.Text>}
       <S.InfoContainer>
         <S.InfoLeft>{infoLeft}</S.InfoLeft>
@@ -58,6 +69,7 @@ function CardTooltip({
           </Tooltip>
         )}
       </S.InfoContainer>
+      {callToAction && <S.CallToAction>{callToAction}</S.CallToAction>}
     </S.Container>
   );
 }

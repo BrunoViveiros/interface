@@ -5,7 +5,7 @@ import userFactory from "config/testUtils/factories/userFactory";
 import nonProfitFactory from "config/testUtils/factories/nonProfitFactory";
 
 import { expectTextToBeInTheDocument } from "config/testUtils/expects";
-import { UserStatistics } from "types/entities/userStatistics";
+import { UserStatistics } from "@ribon.io/shared/types";
 import userStatisticsFactory from "config/testUtils/factories/userStatisticsFactory";
 import Impact from ".";
 
@@ -13,7 +13,6 @@ describe("Impact Page", () => {
   describe("Total Impact Cards", () => {
     const user = userFactory({ id: 1 });
     const userStatistics = userStatisticsFactory();
-
     describe("when there are more cards to show", () => {
       beforeEach(() => {
         renderComponent(<Impact />, {
@@ -21,16 +20,22 @@ describe("Impact Page", () => {
             currentUser: user,
           },
         });
-        mockRequest(`api/v1/users/${user.id}/statistics`, {
+        mockRequest(`api/v1/users/statistics/?id=${user.id}&`, {
           payload: userStatistics as UserStatistics,
+        });
+        mockRequest("/api/v1/users/update_streak", {
+          method: "POST",
+          payload: {
+            streak: 1,
+          },
         });
       });
 
-      it("should render the imp", () => {
+      it("should render the impacts cards", () => {
         expectTextToBeInTheDocument(userStatistics.totalTickets.toString());
         expectTextToBeInTheDocument("Donated tickets");
 
-        expectTextToBeInTheDocument("R$ 15,00");
+        expectTextToBeInTheDocument("$3.00");
         expectTextToBeInTheDocument("Donated money");
 
         expectTextToBeInTheDocument(userStatistics.totalNonProfits.toString());
@@ -66,7 +71,7 @@ describe("Impact Page", () => {
     const user = userFactory({ id: 1 });
     const impact = [impactFactory({ nonProfit: nonProfitFactory({ id: 1 }) })];
 
-    describe("when there are  cards to show", () => {
+    describe("when there are cards to show", () => {
       beforeEach(() => {
         renderComponent(<Impact />, {
           currentUserProviderValue: {

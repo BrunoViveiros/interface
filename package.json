@@ -5,32 +5,38 @@
   "dependencies": {
     "@amplitude/analytics-browser": "^1.6.8",
     "@apollo/client": "^3.6.9",
-    "@growthbook/growthbook-react": "^0.9.1",
-    "@ribon.io/shared": "^1.0.33",
+    "@growthbook/growthbook-react": "^0.17.0",
+    "@ribon.io/shared": "^1.0.76",
     "@sentry/react": "^6.16.1",
     "@testing-library/jest-dom": "^5.16.5",
     "@testing-library/react": "^12.1.5",
     "@testing-library/user-event": "^13.2.1",
+    "@types/crypto-js": "^4.1.1",
     "@types/jest": "^29.0.0",
     "@types/node": "^18.11.9",
     "@types/react": "^17.0.20",
     "@types/react-dom": "^17.0.9",
     "@types/react-howler": "^5.2.0",
+    "@types/react-input-mask": "^3.0.2",
     "axios": "^0.27.2",
     "camelcase-keys": "^7.0.2",
+    "crypto-js": "^4.1.1",
     "ethers": "^5.7.0",
     "firebase": "8.8.1",
     "graphql": "^16.6.0",
+    "html-react-parser": "^4.0.0",
     "i18next": "^21.8.14",
     "i18next-browser-languagedetector": "^6.1.5",
     "i18next-http-backend": "^1.4.1",
     "keen-slider": "^6.7.0",
     "lottie-colorify": "^0.8.0",
     "mixpanel-browser": "^2.45.0",
+    "polished": "^4.2.2",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
     "react-howler": "^5.2.0",
     "react-i18next": "^11.15.3",
+    "react-input-mask": "^3.0.0-alpha.2",
     "react-insta-stories": "^2.4.2",
     "react-lottie-player": "^1.4.3",
     "react-modal": "^3.15.1",
@@ -47,10 +53,11 @@
     "web-vitals": "^3.0.1"
   },
   "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
-    "test": "react-scripts test",
-    "testCoverage": "react-scripts test --coverage --watchAll=false",
+    "start": "craco start",
+    "start-debug": "REACT_APP_DEBUG_VIEW=true REACT_APP_GROWTHBOOK_DEV_MODE=true craco start",
+    "build": "craco build",
+    "test": "craco test",
+    "testCoverage": "craco test --coverage --watchAll=false",
     "eject": "react-scripts eject",
     "generate": "yarn plop --plopfile ./generators/plopfile.js",
     "lint": "eslint src/**/*.ts src/**/*.tsx && prettier --check src/**/*.ts src/**/*.tsx",
@@ -58,7 +65,8 @@
     "lint:css:fix": "stylelint --fix src/**/styles.ts",
     "storybook": "start-storybook -p 6006 -s public",
     "build-storybook": "build-storybook -s public",
-    "codehawk": "codehawk src"
+    "codehawk": "codehawk src",
+    "coveralls": "cat coverage/lcov.info | coveralls"
   },
   "eslintConfig": {
     "extends": [
@@ -91,6 +99,7 @@
   "devDependencies": {
     "@commitlint/cli": "^17.0.3",
     "@commitlint/config-conventional": "^16.0.0",
+    "@craco/craco": "^7.0.0",
     "@storybook/addon-actions": "^6.5.10",
     "@storybook/addon-essentials": "^6.5.10",
     "@storybook/addon-links": "^6.5.11",
@@ -111,6 +120,7 @@
     "axios-mock-adapter": "^1.21.2",
     "babel-eslint": "^10.1.0",
     "codehawk-cli": "^10.0.1",
+    "coveralls": "^3.1.1",
     "eslint": "^8.26.0",
     "eslint-config-airbnb": "^19.0.4",
     "eslint-config-prettier": "^8.5.0",
@@ -121,7 +131,7 @@
     "eslint-plugin-react-hooks": "^4.6.0",
     "eslint-plugin-storybook": "^0.6.4",
     "husky": "^8.0.1",
-    "jest-canvas-mock": "^2.3.1",
+    "jest-canvas-mock": "^2.4.0",
     "jest-styled-components": "^7.1.1",
     "lint-staged": "^13.0.3",
     "mrm": "4",
@@ -167,12 +177,26 @@
       "!<rootDir>/src/config/routes/ComponentLoader.tsx",
       "!<rootDir>/src/i18n.ts",
       "!<rootDir>/src/reportWebVitals.ts",
-      "!<rootDir>/src/index.tsx"
+      "!<rootDir>/src/index.tsx",
+      "!<rootDir>/src/utils",
+      "!<rootDir>/src/utils/**/*.{ts,tsx}",
+      "!<rootDir>/src/types",
+      "!<rootDir>/src/types/**/*.{ts,tsx}",
+      "!<rootDir>/src/styles",
+      "!<rootDir>/src/styles/**/*.{ts,tsx}",
+      "!<rootDir>/src/config",
+      "!<rootDir>/src/config/**/*.{ts,tsx}",
+      "!<rootDir>/src/pages/promoters/SupportTreasurePage/**/*.{ts,tsx}",
+      "!<rootDir>/src/pages/promoters/TreasurePage/**/*.{ts,tsx}"
     ],
     "coverageThreshold": {
       "global": {
         "statements": 77
       }
+    },
+    "moduleNameMapper": {
+      "^react$": "<rootDir>/node_modules/react",
+      "^react-dom$": "<rootDir>/node_modules/react-dom"
     }
   }
 }

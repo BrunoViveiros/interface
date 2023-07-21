@@ -2,43 +2,48 @@ import ArrowLeft from "assets/icons/arrow-left-green.svg";
 import useNavigation from "hooks/useNavigation";
 import { useLocation } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import Offer from "types/entities/Offer";
-import Cause from "types/entities/Cause";
+import { NonProfit, Offer, Cause, Currencies } from "@ribon.io/shared/types";
 import { useCardGivingFees } from "@ribon.io/shared/hooks";
-import { Currencies } from "@ribon.io/shared/types";
 import { useEffect, useState } from "react";
 import { useCardPaymentInformation } from "contexts/cardPaymentInformationContext";
 import getThemeByFlow from "lib/themeByFlow";
-import NonProfit from "types/entities/NonProfit";
+import { logEvent } from "lib/events";
+import { useBlockedDonationContributionModal } from "hooks/modalHooks/useBlockedDonationContributionModal";
 import * as S from "./styles";
 import UserInfoSection from "./UserInfoSection";
 import CardInfoSection from "./CardInfoSection";
-import SupportImage from "../SupportCausePage/assets/support-image.png";
 
 type LocationState = {
   offer: Offer;
   cause: Cause;
   nonProfit?: NonProfit;
   flow: "cause" | "nonProfit";
+  platform: string;
 };
 
 function PaymentPage(): JSX.Element {
   const { navigateBack } = useNavigation();
   const {
-    state: { offer, cause, nonProfit, flow },
+    state: { offer, cause, nonProfit, flow, platform },
   } = useLocation<LocationState>();
   const { t } = useTranslation("translation", {
     keyPrefix: "promoters.supportWithCommunityPage.paymentPage",
   });
   const [currentSection, setCurrentSection] = useState<"user" | "card">("user");
   const { cardGivingFees } = useCardGivingFees(
-    offer.priceValue,
+    offer.priceValue ?? 0,
     offer.currency.toUpperCase() as Currencies,
   );
-  const { buttonDisabled, handleSubmit, setCause, setNonProfit } =
+  const { buttonDisabled, handleSubmit, setCause, setNonProfit, setOfferId } =
     useCardPaymentInformation();
+  const { hideBlockedDonationContributionModal } =
+    useBlockedDonationContributionModal();
 
   const colorTheme = getThemeByFlow(flow);
+
+  useEffect(() => {
+    hideBlockedDonationContributionModal();
+  }, []);
 
   useEffect(() => {
     setCause(cause);
@@ -47,6 +52,29 @@ function PaymentPage(): JSX.Element {
   useEffect(() => {
     setNonProfit(nonProfit);
   }, [nonProfit]);
+
+  useEffect(() => {
+    setOfferId(offer.id);
+  }, [offer]);
+
+  useEffect(() => {
+    if (flow === "cause") {
+      logEvent("P5_view", {
+        causeId: cause?.id,
+        price: offer.priceValue,
+        currency: offer.currency,
+        platform: "web",
+      });
+    }
+    if (flow === "nonProfit") {
+      logEvent("P6_view", {
+        nonprofitId: nonProfit?.id,
+        price: offer.priceValue,
+        currency: offer.currency,
+        platform: "web",
+      });
+    }
+  }, []);
 
   const isUserSection = () => currentSection === "user";
   const isCardSection = () => currentSection === "card";
@@ -61,7 +89,7 @@ function PaymentPage(): JSX.Element {
     if (isUserSection()) {
       setCurrentSection("card");
     } else if (isCardSection()) {
-      handleSubmit();
+      handleSubmit(platform);
     }
   };
 
@@ -73,7 +101,8 @@ function PaymentPage(): JSX.Element {
     }
   };
 
-  const highlightText = () => nonProfit?.name || cause?.name;
+  const isNonprofit = () => flow === "nonProfit" && nonProfit;
+  const highlightText = () => (isNonprofit() ? nonProfit?.name : cause?.name);
 
   return (
     <S.Container>
@@ -84,8 +113,12 @@ function PaymentPage(): JSX.Element {
       />
       <S.MainContainer>
         <S.SupportImage
-          src={nonProfit?.mainImage || SupportImage}
-          alt="support-cause-img"
+          src={isNonprofit() ? nonProfit?.backgroundImage : cause?.coverImage}
+          alt={
+            (isNonprofit()
+              ? nonProfit?.backgroundImageDescription
+              : cause?.coverImageDescription) ?? ""
+          }
         />
         <S.ContentContainer>
           <S.Title>

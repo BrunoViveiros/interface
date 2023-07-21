@@ -12,7 +12,6 @@ import { Router } from "react-router-dom";
 import { I18nextProvider } from "react-i18next";
 import i18n from "i18n-test";
 import theme from "styles/theme";
-import { QueryClient, QueryClientProvider } from "react-query";
 import WalletProvider, {
   IWalletContext,
   WalletContext,
@@ -34,7 +33,6 @@ import ModalProvider, {
   IModalContext,
   ModalContext,
 } from "contexts/modalContext";
-
 import CardPaymentInformationProvider, {
   CardPaymentInformationContext,
   ICardPaymentInformationContext,
@@ -48,6 +46,16 @@ import CryptoPaymentProvider, {
   CryptoPaymentContext,
   ICryptoPaymentContext,
 } from "contexts/cryptoPaymentContext";
+import TasksProvider, {
+  TasksContext,
+  ITasksContext,
+} from "contexts/tasksContext";
+import CausesProvider, {
+  CausesContext,
+  ICausesContext,
+} from "contexts/causesContext";
+
+import { QueryClientComponent } from "@ribon.io/shared/hooks";
 
 export function renderWithTheme(children: React.ReactNode): RenderResult {
   return render(<ThemeProvider theme={theme}>{children}</ThemeProvider>);
@@ -92,6 +100,8 @@ function renderProvider(
 export type RenderComponentProps = {
   history?: MemoryHistory;
   walletProviderValue?: Partial<IWalletContext>;
+  tasksProviderValue?: Partial<ITasksContext>;
+  causesProviderValue?: Partial<ICausesContext>;
   currentUserProviderValue?: Partial<ICurrentUserContext>;
   toastProviderValue?: Partial<IToastContext>;
   loadingOverlayValue?: Partial<ILoadingOverlayContext>;
@@ -106,6 +116,8 @@ export function renderComponent(
   {
     history = createMemoryHistory(),
     walletProviderValue = {},
+    tasksProviderValue = {},
+    causesProviderValue = {},
     currentUserProviderValue = {},
     toastProviderValue = {},
     locationState = {},
@@ -116,49 +128,58 @@ export function renderComponent(
     cryptoPaymentProviderValue = {},
   }: RenderComponentProps = {},
 ): RenderWithContextResult {
-  const queryClient = new QueryClient();
   const historyObject = history;
   historyObject.location.state = locationState;
 
   return {
     component: render(
       <ThemeProvider theme={theme}>
-        <QueryClientProvider client={queryClient}>
+        <QueryClientComponent>
           <I18nextProvider i18n={i18n}>
             <Router history={historyObject}>
               {renderProvider(
-                WalletProvider,
-                WalletContext,
-                walletProviderValue,
+                CurrentUserProvider,
+                CurrentUserContext,
+                currentUserProviderValue,
                 renderProvider(
-                  CurrentUserProvider,
-                  CurrentUserContext,
-                  currentUserProviderValue,
+                  TasksProvider,
+                  TasksContext,
+                  tasksProviderValue,
                   renderProvider(
-                    ToastContextProvider,
-                    ToastContext,
-                    toastProviderValue,
+                    CausesProvider,
+                    CausesContext,
+                    causesProviderValue,
                     renderProvider(
-                      LoadingOverlayProvider,
-                      LoadingOverlayContext,
-                      loadingOverlayValue,
+                      ToastContextProvider,
+                      ToastContext,
+                      toastProviderValue,
                       renderProvider(
-                        ModalProvider,
-                        ModalContext,
-                        modalProviderValue,
+                        LoadingOverlayProvider,
+                        LoadingOverlayContext,
+                        loadingOverlayValue,
                         renderProvider(
-                          CardPaymentInformationProvider,
-                          CardPaymentInformationContext,
-                          cardPaymentProviderValue,
+                          ModalProvider,
+                          ModalContext,
+                          modalProviderValue,
                           renderProvider(
-                            NetworkProvider,
-                            NetworkContext,
-                            networkProviderValue,
+                            CardPaymentInformationProvider,
+                            CardPaymentInformationContext,
+                            cardPaymentProviderValue,
                             renderProvider(
-                              CryptoPaymentProvider,
-                              CryptoPaymentContext,
-                              cryptoPaymentProviderValue,
-                              component,
+                              NetworkProvider,
+                              NetworkContext,
+                              networkProviderValue,
+                              renderProvider(
+                                WalletProvider,
+                                WalletContext,
+                                walletProviderValue,
+                                renderProvider(
+                                  CryptoPaymentProvider,
+                                  CryptoPaymentContext,
+                                  cryptoPaymentProviderValue,
+                                  component,
+                                ),
+                              ),
                             ),
                           ),
                         ),
@@ -169,7 +190,7 @@ export function renderComponent(
               )}
             </Router>
           </I18nextProvider>
-        </QueryClientProvider>
+        </QueryClientComponent>
       </ThemeProvider>,
     ),
     history,

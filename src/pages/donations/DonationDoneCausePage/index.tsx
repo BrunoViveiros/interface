@@ -1,5 +1,10 @@
 import IconsAroundImage from "components/atomics/sections/IconsAroundImage";
-import { useOffers } from "@ribon.io/shared/hooks";
+import {
+  useCanDonate,
+  useOffers,
+  useStatistics,
+  useFirstAccessToIntegration,
+} from "@ribon.io/shared/hooks";
 import VolunteerActivismPink from "assets/icons/volunteer-activism-pink.svg";
 import VolunteerActivismYellow from "assets/icons/volunteer-activism-yellow.svg";
 import VolunteerActivismGreen from "assets/icons/volunteer-activism-green.svg";
@@ -12,14 +17,17 @@ import { useCallback, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useLocation } from "react-router-dom";
 import { logError } from "services/crashReport";
-import Cause from "types/entities/Cause";
-import NonProfit from "types/entities/NonProfit";
-import Offer from "types/entities/Offer";
-import { Currencies } from "@ribon.io/shared/types";
+import { Cause, NonProfit, Offer, Currencies } from "@ribon.io/shared/types";
 import getThemeByFlow from "lib/themeByFlow";
 import useFormattedImpactText from "hooks/useFormattedImpactText";
 import { getAudioFromStorage } from "lib/cachedAudio";
 import ReactHowler from "react-howler";
+import { useTasksContext } from "contexts/tasksContext";
+import { useCurrentUser } from "contexts/currentUserContext";
+import { useIntegrationId } from "hooks/useIntegrationId";
+import { PLATFORM } from "utils/constants";
+import extractUrlValue from "lib/extractUrlValue";
+import { logEvent } from "lib/events";
 import * as S from "./styles";
 
 function DonationDoneCausePage(): JSX.Element {
@@ -45,6 +53,50 @@ function DonationDoneCausePage(): JSX.Element {
   } = useLocation<LocationState>();
   const { getOffer } = useOffers(currency);
   const [offer, setOffer] = useState<Offer>();
+  const { currentUser } = useCurrentUser();
+  const { registerAction } = useTasksContext();
+  const {
+    userStatistics,
+    refetch: refetchStatistics,
+    isLoading,
+  } = useStatistics({
+    userId: currentUser?.id,
+  });
+
+  const integrationId = useIntegrationId();
+  const { search } = useLocation();
+  const externalId = extractUrlValue("external_id", search);
+  const { donateApp } = useCanDonate(integrationId, PLATFORM, externalId);
+
+  const quantityOfDonationsToShowDownload = 3;
+  const quantityOfDonationsToShowContribute = 5;
+
+  const { refetch } = useFirstAccessToIntegration(integrationId);
+
+  const firstDonation = 1;
+
+  const shouldShowAppDownload = useCallback(() => {
+    if (donateApp) return false;
+    return (
+      Number(userStatistics?.totalTickets) %
+        quantityOfDonationsToShowDownload ===
+        0 || Number(userStatistics?.totalTickets) === firstDonation,
+      Number(userStatistics?.totalTickets) %
+        quantityOfDonationsToShowDownload ===
+        0 || Number(userStatistics?.totalTickets) === firstDonation
+    );
+  }, [userStatistics, donateApp]);
+  const shouldShowContribute = useCallback(
+    () =>
+      Number(userStatistics?.totalTickets) %
+        quantityOfDonationsToShowContribute ===
+        0 || Number(userStatistics?.totalTickets) === firstDonation,
+    [userStatistics],
+  );
+
+  useEffect(() => {
+    refetchStatistics();
+  }, [currentUser]);
 
   const donationInfos = useCallback(
     async (idOffer: number) => {
@@ -62,23 +114,45 @@ function DonationDoneCausePage(): JSX.Element {
 
   function navigate() {
     clearTimeout(pageTimeout);
+    refetch();
     if (flow === "cause" && hasButton) {
+      registerAction("contribution_done_page_view");
+      logEvent("causeGave_end", {
+        platform: "web",
+      });
       navigateTo({
         pathname: "/promoters/support-cause",
         state: { nonProfit, cause },
       });
     }
     if (flow === "nonProfit") {
+      registerAction("contribution_done_page_view");
+      logEvent("ngoGave_end", {
+        platform: "web",
+      });
       navigateTo({
         pathname: "/promoters/support-non-profit",
         state: { nonProfit, cause },
       });
     }
     if (!hasButton) {
-      navigateTo({
-        pathname: "/post-donation",
-        state: { nonProfit, cause },
-      });
+      registerAction("donation_done_page_view");
+
+      if (shouldShowAppDownload()) {
+        navigateTo({
+          pathname: "/app-download",
+          state: { nonProfit, showContribute: shouldShowContribute() },
+        });
+      } else if (!isLoading && shouldShowContribute()) {
+        navigateTo({
+          pathname: "/post-donation",
+          state: { nonProfit, cause },
+        });
+      } else if (!isLoading && userStatistics) {
+        navigateTo({
+          pathname: "/causes",
+        });
+      }
     }
   }
 
@@ -90,9 +164,9 @@ function DonationDoneCausePage(): JSX.Element {
     setPageTimeout(
       setTimeout(() => {
         navigate();
-      }, 5000),
+      }, 2500),
     );
-  }, []);
+  }, [currentUser, userStatistics]);
 
   const colorTheme = getThemeByFlow(flow || "cause");
 
@@ -111,7 +185,7 @@ function DonationDoneCausePage(): JSX.Element {
       <S.ImageContainer>
         <IconsAroundImage
           imageSrc={
-            flow === "cause" ? cause?.mainImage : nonProfit?.backgroundImage
+            flow === "cause" ? cause?.mainImage : nonProfit?.confirmationImage
           }
           iconAnimationYellow={
             hasButton ? VolunteerActivismYellow : ConfirmationNumberYellow

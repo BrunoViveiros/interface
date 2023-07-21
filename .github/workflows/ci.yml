@@ -2,7 +2,8 @@ name: Continuous Integration
 
 on:
   push:
-  pull_request_target:
+  pull_request:
+    types: [opened, edited]
 
 jobs:
   install-and-test:
@@ -34,5 +35,11 @@ jobs:
           REACT_APP_RIBON_API: ${{ secrets.REACT_APP_RIBON_API }}
           REACT_APP_RIBON_COMPANY_ID: ${{ secrets.REACT_APP_RIBON_COMPANY_ID }}
           REACT_APP_ZENDESK_KEY: ${{ secrets.REACT_APP_ZENDESK_KEY }}
+          REACT_APP_GROWTHBOOK_CLIENT_KEY: ${{ secrets.REACT_APP_GROWTHBOOK_CLIENT_KEY }}
+          REACT_APP_RIBON_GROWTHBOOK_URL: ${{ secrets.REACT_APP_RIBON_GROWTHBOOK_URL }}
         run: |
           yarn testCoverage
+      - name: Report Coveralls
+        env:
+          COVERALLS_REPO_TOKEN: ${{ secrets.COVERALLS_REPO_TOKEN }}
+        uses: coverallsapp/github-action@v2

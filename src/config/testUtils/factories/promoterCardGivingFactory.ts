@@ -1,4 +1,4 @@
-import PromoterCardGiving from "types/apiResponses/PromoterCardGiving";
+import { PromoterCardGiving } from "@ribon.io/shared/types";
 
 function promoterCardGivingFactory(
   params: Partial<PromoterCardGiving> = {},
@@ -18,6 +18,8 @@ function promoterCardGivingFactory(
       updatedAt: "2022-06-28 16:38:29 UTC",
       positionOrder: 1,
       title: "Test Offer",
+      gateway: "stripe",
+      externalId: "price_1J5Z2nJZ6j4Z2nJZ6j4Z2nJZ",
     },
     paid_date: "2022-07-13 19:31:15 UTC",
   };

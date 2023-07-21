@@ -1,5 +1,4 @@
-import { Languages } from "types/enums/Languages";
-import { Currencies } from "@ribon.io/shared/types";
+import { Languages, Currencies } from "@ribon.io/shared/types";
 import { coinByLanguage } from "./index";
 
 describe("#coinByLanguage", () => {
@@ -11,7 +10,7 @@ describe("#coinByLanguage", () => {
 
   describe("when the language is EN", () => {
     it("returns the USD currency", () => {
-      expect(coinByLanguage(Languages.EN)).toEqual(Currencies.USD);
+      expect(coinByLanguage(Languages.en)).toEqual(Currencies.USD);
     });
   });
 });

@@ -4,7 +4,11 @@ import Spinner from "components/atomics/Spinner";
 import { useTranslation } from "react-i18next";
 import useBreakpoint from "hooks/useBreakpoint";
 import { useEffect, useState } from "react";
-import directIllustration from "../../assets/direct-illustration.svg";
+import directIllustration from "assets/images/direct-illustration.svg";
+import ContributionCard from "components/moleculars/cards/ContributionCard";
+import { useImpactConversion } from "hooks/useImpactConversion";
+import { handleVariation } from "lib/handleVariation";
+import { logEvent } from "lib/events";
 import * as S from "../styles";
 import DirectImpactCard from "./DirectImpactCard.tsx";
 
@@ -14,6 +18,9 @@ function DirectSection() {
     keyPrefix: "impactPage.directSection",
   });
   const handleEmptyButtonClick = () => {
+    logEvent("giveNonProfitCard_click", {
+      from: "impactEmptyState",
+    });
     navigateTo("/promoters/support-non-profit");
   };
 
@@ -30,6 +37,9 @@ function DirectSection() {
 
   const { useDirectPersonPayments } = usePersonPayments();
   const { data } = useDirectPersonPayments(page, per);
+
+  const { description, contribution, offer, nonProfit, variation } =
+    useImpactConversion();
 
   const hasPayments = impactCards?.length > 0;
 
@@ -63,6 +73,48 @@ function DirectSection() {
     setShowMoreDisabled(true);
   };
 
+  const emptySection = () => (
+    <S.EmptySectionContainer>
+      <S.EmptyImage src={directIllustration} />
+      <S.EmptyTitle>{t("emptyTitle")}</S.EmptyTitle>
+      <S.EmptyText>{t("emptyText")}</S.EmptyText>
+      <S.EmptyButton
+        text={t("emptyButton")}
+        size="medium"
+        onClick={handleEmptyButtonClick}
+      />
+    </S.EmptySectionContainer>
+  );
+
+  const contributionWithVariation = () => (
+    <S.EmptySectionContainer>
+      <S.EmptyTitle>{t("emptyTitle")}</S.EmptyTitle>
+      <S.EmptyText>{t("emptyText")}</S.EmptyText>
+      <ContributionCard
+        description={description}
+        impact={contribution?.impact ?? ""}
+        value={contribution?.value ?? 0}
+        offer={offer}
+        nonProfit={nonProfit}
+        style={{
+          marginTop: isMobile ? "0" : "8px",
+          width: isMobile ? "110%" : "100%",
+          textAlign: "start",
+          borderRadius: isMobile ? "0" : "8px",
+        }}
+        from="impact_page"
+        flow="nonProfit"
+      />
+    </S.EmptySectionContainer>
+  );
+
+  const EmptySectionWithVariation: JSX.Element | null = handleVariation(
+    variation,
+    emptySection,
+    contributionWithVariation,
+    {},
+  );
+
   return (
     <S.Container>
       {hasPayments ? (
@@ -83,16 +135,7 @@ function DirectSection() {
           )}
         </S.CardsContainer>
       ) : (
-        <S.EmptySectionContainer>
-          <S.EmptyImage src={directIllustration} />
-          <S.EmptyTitle>{t("emptyTitle")}</S.EmptyTitle>
-          <S.EmptyText>{t("emptyText")}</S.EmptyText>
-          <S.EmptyButton
-            text={t("emptyButton")}
-            size="medium"
-            onClick={handleEmptyButtonClick}
-          />
-        </S.EmptySectionContainer>
+        (!!contribution && EmptySectionWithVariation) || emptySection()
       )}
     </S.Container>
   );

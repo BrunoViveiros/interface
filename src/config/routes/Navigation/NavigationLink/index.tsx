@@ -15,7 +15,9 @@ export type Props = {
     path: LocationDescriptor;
     title: string;
     search?: string;
+    onClick?: () => void;
   }[];
+  showActivityIndicatorCircle?: boolean;
 };
 
 function NavigationLink({
@@ -25,6 +27,7 @@ function NavigationLink({
   enabled = false,
   onClick,
   menuOptions,
+  showActivityIndicatorCircle = false,
 }: Props): JSX.Element {
   const [menuVisible, setMenuVisible] = useState(false);
 
@@ -58,7 +61,10 @@ function NavigationLink({
           to={to}
           onClick={onClick}
         >
-          <S.Icon src={icon} />
+          <S.IconContainer>
+            <S.Icon src={icon} />
+            {showActivityIndicatorCircle && <S.RedBall />}
+          </S.IconContainer>
           <S.Title enabled={enabled}>{title}</S.Title>
         </S.StyledLink>
         {renderFloatingSideMenu()}

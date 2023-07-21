@@ -1,11 +1,17 @@
 import React from "react";
-import { renderComponent } from "config/testUtils";
+import { renderComponent, waitForPromises } from "config/testUtils";
 import { mockRequest } from "config/testUtils/test-helper";
 import nonProfitFactory from "config/testUtils/factories/nonProfitFactory";
 import { expectTextToBeInTheDocument } from "config/testUtils/expects";
 import causeFactory from "config/testUtils/factories/causeFactory";
+
 import Causes from ".";
 
+jest.mock("hooks/useImpactConversion", () => ({
+  useImpactConversion: () => ({
+    variation: "Control",
+  }),
+}));
 describe("Causes", () => {
   const cause1 = causeFactory({
     id: 1,
@@ -46,11 +52,11 @@ describe("Causes", () => {
     }),
   ];
 
-  mockRequest("/api/v1/non_profits", {
+  mockRequest("/api/v1/free_donation_non_profits", {
     payload: nonProfits,
   });
 
-  mockRequest("/api/v1/causes", {
+  mockRequest("/api/v1/free_donation_causes", {
     payload: [cause1],
   });
 
@@ -59,8 +65,9 @@ describe("Causes", () => {
     method: "POST",
   });
 
-  beforeEach(() => {
+  beforeEach(async () => {
     renderComponent(<Causes />);
+    await waitForPromises();
   });
 
   it("renders the title", () => {
@@ -68,10 +75,10 @@ describe("Causes", () => {
   });
 
   it("renders the customer support card", () => {
-    expectTextToBeInTheDocument("Ribon Support");
+    expectTextToBeInTheDocument("Access user support");
   });
 
-  it("shows the non profit", () => {
+  it("shows the non profit", async () => {
     nonProfits.forEach((nonProfit) => {
       expectTextToBeInTheDocument(
         `Donate ${nonProfit.impactByTicket} ${nonProfit.impactDescription}`,

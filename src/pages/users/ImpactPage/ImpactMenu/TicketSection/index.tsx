@@ -1,5 +1,5 @@
 import CardTopImage from "components/moleculars/cards/CardTopImage";
-import { useImpact } from "@ribon.io/shared/hooks";
+import { useImpact, useLegacyImpact } from "@ribon.io/shared/hooks";
 import useFormattedImpactText from "hooks/useFormattedImpactText";
 import useNavigation from "hooks/useNavigation";
 import { useTranslation } from "react-i18next";
@@ -13,11 +13,12 @@ function TicketSection() {
     keyPrefix: "impactPage.ticketSection",
   });
   const handleEmptyButtonClick = () => {
-    navigateTo("/");
+    navigateTo("/causes");
   };
 
   const { currentUser } = useCurrentUser();
   const { userImpact } = useImpact(currentUser?.id);
+  const { legacyUserImpact } = useLegacyImpact(currentUser?.id);
   const { formattedImpactText } = useFormattedImpactText();
 
   const impactCards = userImpact || [];
@@ -40,6 +41,16 @@ function TicketSection() {
               }
               icon={item.nonProfit.logo}
               size="large"
+            />
+          ))}
+          {legacyUserImpact?.map((item: any) => (
+            <CardTopImage
+              key={item.legacyNonProfit.id}
+              title={item.legacyNonProfit.name}
+              text={item.totalImpact}
+              icon={item.legacyNonProfit.logoUrl}
+              size="large"
+              label={t("migrated")}
             />
           ))}
         </S.CardsContainer>
